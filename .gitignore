@@ -1,0 +1,7 @@
+# 公開しないもの。中身の歯止めは my-company 側の check_hub.py が数える
+.DS_Store
+_build/
+_src/
+_grading/
+*_解答.ipynb
+*.py

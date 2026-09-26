@@ -1,0 +1,1719 @@
+<!DOCTYPE html><html lang="ja"><head><meta name="robots" content="noindex,nofollow"><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>アルゴリズムとデータ構造 第1回｜聞き方で、回数が変わる</title><meta name="description" content="1 から 100 までの整数を当てる。端から順に聞く方法と、真ん中から半分に絞る方法を1 手ずつ比べ、手順として書けているかを確かめる。"><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23152540'/%3E%3Cpath d='M6 10h10M6 16h6M6 22h12' stroke='%23a99bd6' stroke-width='2.4' stroke-linecap='round'/%3E%3Ccircle cx='23' cy='12' r='4' fill='none' stroke='white' stroke-width='2.4'/%3E%3Cpath d='M26 15l3.5 4' stroke='white' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E"><style>/* ============================================================================
+   アルゴリズムとデータ構造 第1回 — 器（第2版・2026-09-21）
+
+   基準は 論理回路_単体版.html。寸法・余白・折返しの考え方は引き継ぎ、
+   字づかい・階層・奥行きを強くする。**装飾は足さない。** 効かせるのは
+   大きさの差、太さの差、余白、そして 1 色の使いどころだけにする。
+
+   ★ 投影して読める大きさを犠牲にしない。本文 16px を下限にする。
+   ★ 外部の字体を読み込まない（単体で動く）。字体は端末のものを使う。
+   ============================================================================ */
+
+:root{
+  --bg:#eef1f8;
+  --bg-2:#f6f8fc;
+  --ink:#141d2e;
+  --ink-2:#3a4a66;
+  --ink-3:#5a6b85;
+  --ink-4:#8395ad;
+  --line:#dbe2ed;
+  --line-2:#e8edf5;
+  --paper:#fff;
+  --paper-2:#f7f9fd;
+
+  --deep:#141f37;
+  --deep-2:#1d2c4c;
+
+  --main:#6f5cab;
+  --main-deep:#4c3f78;
+  --main-lit:#9683d6;
+  --main-soft:#ece8f8;
+
+  --hit:#0f7a61;
+  --hit-soft:#e1f1ec;
+  --ask:#b07a1f;
+  --ask-soft:#fbf2df;
+  --drop:#9fabbb;
+  --cool:#5a6b85;
+  /* 止まる・ちがう。★ 新しい色ではありません。ch2 / ch5 / .qopt.ng に直書きしてあった
+     赤（#8c4359 / #8a3f56 / #a55068 と地の #f7eaee / #f8ebee）に名前を付けただけです。
+     直書きのままだと、同じ意味の赤が場所ごとに少しずつ違う値になります。 */
+  --stop:#8c4359;
+  --stop-line:#a55068;
+  --stop-soft:#f8ebee;
+
+  /* ★ 文字の大きさの下限は 3 段。数字を直に書かず、ここから引く。
+     --fs-body  地の文・押すもの・表の中身・図の説明   16px（html.big で 19.5px）
+     --fs-label ラベル・出典・表の見出し・単位・凡例   14px（html.big で 17.1px）
+     図の中（SVG の font-size）は 15px を下限にする（ch*.js。rem が効かないので実数）。
+     ★ 在庫は 2026-09-21 に実測。いちばん小さいのは .brand .course の 11.2px だった。
+       ラベル側を 16px にすると上の帯と章ナビと表が割れるので、14px で止める。 */
+  --fs-body:1rem;
+  --fs-label:.875rem;
+  /* 誌面（参考書の画像）は、この幅を下回ったら .diagram-scroll の中で横に送る。
+     2026-09-21 に assets/*.png を開いて、和文の行の高さを実測した。原寸（画像の幅 1100px）で
+     いちばん小さいのは binary-steps の 16px。def-algo は 21px、linear-steps は 18px。
+     いちばん小さいものに合わせ、825px（＝1100 × 0.75）まで。ここで中の字が 12px になる。
+     これが「図の中 12px」の下限に当たる。qa_drive.py の FIG_EM_PX と対。 */
+  --fig-min:825px;
+
+  --shadow-1:0 1px 2px rgba(20,29,46,.05);
+  --shadow-2:0 2px 4px rgba(20,29,46,.05), 0 12px 28px -20px rgba(20,29,46,.35);
+  --r:14px;
+}
+
+*{box-sizing:border-box}
+html{font-size:16px;scrollbar-gutter:stable;-webkit-text-size-adjust:100%}
+html.big{font-size:19.5px}
+body{margin:0;color:var(--ink);line-height:1.78;
+  font-family:'Hiragino Kaku Gothic ProN','Yu Gothic','Noto Sans JP',sans-serif;
+  font-feature-settings:"palt" 1;
+  -webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(1100px 520px at 50% -180px, #fdfdff 0%, rgba(253,253,255,0) 70%),
+    linear-gradient(180deg, var(--bg-2) 0%, var(--bg) 340px);
+  background-attachment:fixed}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--paper);border-radius:10px;
+  transition:background .18s,border-color .18s,color .18s,box-shadow .18s,transform .12s}
+button:disabled,input:disabled{cursor:default}
+/* ★ opacity で薄くしない。紫の地に白字が乗ったまま薄くなり、字が読めなくなります
+   （2026-09-21 に第2章「聞く」・第3章「進む」「最後まで」・第5章「進む」で実測）。
+   使えないものは、地と字を置き換えて「読めるまま、止まっている」形にします。 */
+.btn:disabled,.btn.primary:disabled,.btn.ghost:disabled{
+  background:var(--paper-2);color:var(--ink-3);border-color:var(--line);
+  box-shadow:none;transform:none}
+.keypad input:disabled{background:var(--paper-2);color:var(--ink-4)}
+button:focus-visible,a:focus-visible,summary:focus-visible{outline:2px solid var(--main);outline-offset:2px}
+a{color:var(--main-deep)}
+svg{display:block}
+h1,h2,h3,p{margin:0}
+h1{font-size:clamp(2.1rem,3.4vw,3rem);font-weight:800;line-height:1.24;letter-spacing:.01em}
+h2{font-size:clamp(1.45rem,2.1vw,1.95rem);font-weight:800;line-height:1.44;letter-spacing:.012em}
+h3{font-size:1.06rem;font-weight:800;letter-spacing:.01em}
+p+p{margin-top:.72em}
+b,strong{font-weight:800}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+
+/* ── 上の帯 ──────────────────────────────────────────────────────── */
+.wrap{max-width:1320px;margin:auto;padding:0 40px}
+.topbar{min-height:72px;padding:9px 0;display:flex;align-items:center;background:rgba(255,255,255,.86);
+  backdrop-filter:saturate(140%) blur(10px);-webkit-backdrop-filter:saturate(140%) blur(10px);
+  border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.brand{display:flex;align-items:center;gap:13px;font-weight:800;letter-spacing:.015em}
+.brand-icon{width:38px;height:38px;border-radius:11px;flex:0 0 auto;display:grid;place-items:center;
+  background:linear-gradient(145deg,var(--deep-2),var(--deep));
+  box-shadow:0 2px 8px -2px rgba(20,31,55,.5)}
+.brand-icon svg{width:20px;height:20px}
+.brand .course{font-size:var(--fs-label);font-weight:700;color:var(--ink-4);letter-spacing:.12em}
+.header-actions{display:flex;gap:10px}
+.plain{background:var(--paper);color:var(--ink-3);border:1px solid var(--line);
+  border-radius:10px;padding:9px 15px;font-size:var(--fs-body);font-weight:700;white-space:nowrap}
+.plain:hover{border-color:var(--main);color:var(--main-deep)}
+.plain[aria-pressed=true]{background:var(--deep);color:#fff;border-color:var(--deep)}
+
+/* ── 表紙 ────────────────────────────────────────────────────────── */
+.hero{position:relative;overflow:hidden;border-radius:22px;margin:30px 0 26px;
+  background:linear-gradient(135deg,var(--deep) 0%,#23325a 58%,#3b3468 100%);
+  color:#fff;padding:52px 46px 46px;box-shadow:0 20px 50px -34px rgba(20,31,55,.9)}
+.hero::after{content:"01";position:absolute;right:20px;bottom:-112px;
+  font-size:23rem;font-weight:800;line-height:1;letter-spacing:-.05em;
+  color:rgba(255,255,255,.055);pointer-events:none;font-variant-numeric:tabular-nums;z-index:0}
+/* ★ 符丁は .section-no と同じ形（短い棒＋大文字）に揃えます。
+   もとは本文の下に 56×4px の棒を 1 本置いていましたが、緑（#7fd8c0）が系の外の色で、
+   しかも右半分が空いたまま浮いていました。棒は見出しの頭へ移します。 */
+.hero .kicker{display:inline-flex;align-items:center;gap:11px;
+  color:#b9c6e4;font-size:var(--fs-label);font-weight:800;letter-spacing:.16em;margin-bottom:14px}
+.hero .kicker::before{content:"";width:26px;height:3px;border-radius:2px;
+  background:var(--main-lit);flex:0 0 auto}
+.hero h1{color:#fff}
+.hero .lead{margin-top:16px;max-width:37em;color:#c6d3ec;font-size:1.06rem}
+.herogrid{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:40px;align-items:end;
+  position:relative;z-index:1}
+.herocard{background:rgba(9,15,30,.46);border:1px solid rgba(255,255,255,.14);
+  border-left:3px solid var(--main-lit);
+  border-radius:4px 14px 14px 4px;padding:20px 22px;backdrop-filter:blur(6px);
+  -webkit-backdrop-filter:blur(6px)}
+.herocard strong{display:block;font-size:var(--fs-label);letter-spacing:.12em;color:#a9bbdf;margin-bottom:9px}
+.herocard p{font-size:var(--fs-body);color:#e2e9f7;line-height:1.75}
+
+/* ── 章ナビ ──────────────────────────────────────────────────────── */
+.chapters{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-bottom:34px;
+  border-bottom:1px solid var(--line)}
+.chapter{background:transparent;border:none;border-bottom:3px solid transparent;
+  color:var(--ink-3);display:flex;align-items:baseline;gap:9px;text-align:left;
+  padding:15px 10px 13px;border-radius:0;font-size:var(--fs-body);font-weight:700;
+  transition:color .18s,border-color .18s,background .18s}
+/* ★ 見ていない章の番号は #dbe2ed で、白地の上にほとんど残っていませんでした。
+   番号は「何章目か」を示す唯一の手がかりなので、読める灰まで上げます。 */
+.chapter .num{font-size:var(--fs-label);font-weight:800;letter-spacing:.06em;
+  font-variant-numeric:tabular-nums;color:var(--ink-4);opacity:.72}
+.chapter:hover{color:var(--ink-2);background:var(--line-2)}
+.chapter:hover .num{opacity:1}
+/* ★ いま見ている章は、下線・地・字の濃さの 3 つで出します。
+   下線 2px と字の色だけだと、投影したときに「いまどこか」が読み取れません。 */
+.chapter[aria-current=page]{color:var(--ink);font-weight:800;border-bottom-color:var(--main);
+  background:linear-gradient(180deg,rgba(111,92,171,.09),rgba(111,92,171,0))}
+.chapter[aria-current=page] .num{color:var(--main);opacity:1}
+
+/* ── 節の見出し ──────────────────────────────────────────────────── */
+.section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  margin-bottom:26px;flex-wrap:wrap}
+.section-head p{color:var(--ink-2);margin-top:10px;font-size:1rem;max-width:54em}
+.section-no{display:inline-flex;align-items:center;gap:11px;font-size:var(--fs-label);font-weight:800;
+  color:var(--main-deep);letter-spacing:.16em;margin-bottom:10px}
+.section-no::before{content:"";width:26px;height:3px;border-radius:2px;background:var(--main)}
+
+/* ── 切り替え ────────────────────────────────────────────────────── */
+.segmented{display:inline-flex;gap:3px;padding:4px;background:var(--line-2);border-radius:11px;
+  box-shadow:inset 0 1px 2px rgba(20,29,46,.04)}
+.segmented button{background:transparent;border:none;color:var(--ink-3);padding:9px 18px;
+  border-radius:8px;font-size:var(--fs-body);font-weight:700;white-space:nowrap}
+.segmented button:hover{color:var(--ink)}
+.segmented button[aria-pressed=true]{background:var(--paper);color:var(--ink);
+  box-shadow:var(--shadow-1)}
+
+/* ── パネル ──────────────────────────────────────────────────────── */
+/* ★ align-items:start だと、短いほうの列の下に死んだ余白が残ります
+   （2026-09-21 の実測で 第1章 180px・第3章 130px・第4章 107px）。
+   stretch にして、盤（.lab）に余った高さを吸わせます。 */
+.grid-main{display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:24px;align-items:stretch}
+/* ★ 左右に並べる形（第5章）。class で持ちます。inline の style で書くと、
+   折返しの決めより強く、狭い画面でも 2 列のまま残ります
+   （2026-09-21 に 500px で実測。1 列あたり 215px で、手順の 1 行が 3 行に割れていました）。 */
+.grid-main.two{grid-template-columns:1fr 1fr}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;box-shadow:var(--shadow-2);display:flex;flex-direction:column}
+/* ★ 余った高さは、いちばん下の段（たいていは白い .panel-body）が吸います。
+   盤（.lab）に吸わせると、点の地だけが伸びて図が真ん中に浮きます。
+   白い札の底に置けば、両方の列の底がそろったうえで、余りは見えません。 */
+.panel>:last-child{flex:1 1 auto}
+/* ★ 奥行きは 2 段だけ。手前＝押して動くもの、奥＝その裏づけ（脇の説明・誌面・補足）。
+   全部が同じ影だと、主役とわき役が同じ高さに見えます。 */
+.side .panel{box-shadow:var(--shadow-1)}
+.panel-top{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 14px;
+  padding:16px 22px;border-bottom:1px solid var(--line-2)}
+.panel-top h3{display:flex;align-items:center;gap:10px;font-size:1.02rem}
+.panel-top h3::before{content:"";width:4px;height:17px;border-radius:2px;background:var(--main);
+  flex:0 0 auto}
+.panel-top .meta{font-size:var(--fs-label);color:var(--ink-3);font-weight:700;letter-spacing:.02em;
+  margin-left:auto;white-space:nowrap}
+.panel-body{padding:20px 22px}
+.panel-body p{color:var(--ink-2)}
+.panel-body p b{color:var(--ink)}
+.badge{display:inline-block;padding:4px 12px;border-radius:999px;font-size:var(--fs-label);font-weight:800;
+  background:var(--main-soft);color:var(--main-deep)}
+/* ★ align-content:start。これを書かないと、脇の 2 枚が高さを分け合って間延びします。 */
+.side{display:grid;gap:20px;align-content:start}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+
+/* ── 作業盤 ──────────────────────────────────────────────────────── */
+/* ★ 余った高さは、盤と札の底で半分ずつ持ちます（どちらも flex-grow:1）。
+   盤に全部吸わせると点の地だけが 300px 伸びて図が浮き、札の底に全部置くと
+   白が 150px 余ります。半分ずつなら、どちらも気になりません。 */
+.lab{padding:26px 22px;border-bottom:1px solid var(--line-2);
+  flex:1 1 auto;display:flex;flex-direction:column;justify-content:center;
+  background:
+    radial-gradient(circle,#dbe3ef 1px,transparent 1px) 0 0/15px 15px,
+    linear-gradient(180deg,#fbfcfe,#f4f7fc)}
+/* ★ 盤の中身は、図と同じ 640px に揃えて真ん中に置きます。
+   図は viewBox 640 を倍率 1 で描くので、盤いっぱいに広げても図は広がりません。
+   凡例だけが盤の両端（1440px では左右に 116px ずつ離れた位置）へ飛び、
+   どの線の話なのかが読めませんでした。 */
+.lab>.diagram-scroll,.lab-legend,.lab-row{max-width:640px;width:100%;margin-left:auto;margin-right:auto}
+.lab-row{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.lab-legend{display:flex;gap:30px;justify-content:center;margin-top:16px;
+  font-size:var(--fs-label);font-weight:700;color:var(--ink-3)}
+.lab-legend span{display:inline-flex;align-items:center;gap:8px}
+.lab-legend i{width:26px;height:0;border-top:3px solid var(--main);border-radius:2px}
+.lab-legend i.drop{border-top-style:dashed;border-top-color:var(--drop)}
+
+/* ── 結果の帯 ────────────────────────────────────────────────────── */
+.result{display:flex;align-items:center;gap:20px;padding:19px 22px;
+  background:linear-gradient(180deg,#fbfcfe,#f5f8fc)}
+/* ★ 当たった帯は地も変えます。数の札だけを緑にすると、当たった瞬間の落差が出ません。 */
+.result.hit{background:linear-gradient(180deg,var(--hit-soft),#f4faf8)}
+.result .num{width:64px;height:64px;border-radius:15px;display:grid;place-items:center;
+  font-size:1.72rem;font-weight:800;color:#fff;flex:0 0 auto;font-variant-numeric:tabular-nums;
+  background:linear-gradient(145deg,var(--deep-2),var(--deep));
+  box-shadow:0 6px 16px -8px rgba(20,31,55,.8)}
+.result.hit .num{background:linear-gradient(145deg,#15947a,var(--hit));
+  box-shadow:0 6px 16px -8px rgba(15,122,97,.8)}
+/* ★ その章の答えが出る 1 行。地の文と同じ大きさだと、結論が結論に見えません。 */
+.result .rh{font-weight:800;font-size:1.14rem;line-height:1.55}
+.result .rt{color:var(--ink-2);font-size:var(--fs-body);margin-top:3px}
+
+/* ── 押す・入れる ────────────────────────────────────────────────── */
+.keypad{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+/* ★ 入力欄とボタンの高さをそろえます。padding だけで合わせると 1〜2px ずれて、
+   並んだときに底がそろいません。 */
+.keypad input,.keypad .btn,.stepbar .btn{min-height:46px}
+.keypad input{width:128px;padding:11px 14px;border:1px solid var(--line);border-radius:10px;
+  background:#fff;font-size:1.06rem;font-weight:800;text-align:center;
+  font-variant-numeric:tabular-nums;box-shadow:inset 0 1px 2px rgba(20,29,46,.05)}
+.keypad input:focus{border-color:var(--main);outline:none;
+  box-shadow:0 0 0 3px rgba(111,92,171,.16)}
+.btn{display:inline-flex;align-items:center;justify-content:center;
+  border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 19px;
+  font-size:var(--fs-body);font-weight:700;box-shadow:var(--shadow-1)}
+.btn:hover{border-color:var(--main);color:var(--main-deep);transform:translateY(-1px)}
+/* ★ 押した手応え。もとは :hover で 1px 浮いたものが :active で元に戻るだけで、
+   「押した」という戻りがありませんでした。沈めて、影を消します。 */
+.btn:active{transform:translateY(1px);box-shadow:inset 0 2px 5px -3px rgba(20,29,46,.5)}
+.btn.primary{background:linear-gradient(160deg,var(--main-lit),var(--main));
+  border-color:var(--main-deep);color:#fff;box-shadow:0 4px 12px -6px rgba(76,63,120,.9)}
+.btn.primary:hover{background:linear-gradient(160deg,var(--main),var(--main-deep));color:#fff}
+.btn.primary:active{box-shadow:inset 0 3px 7px -3px rgba(28,20,58,.75)}
+.btn.ghost{background:transparent;box-shadow:none}
+
+/* ── 表 ──────────────────────────────────────────────────────────── */
+table{border-collapse:collapse;width:100%;font-size:var(--fs-body)}
+th,td{padding:12px;text-align:center;border-bottom:1px solid var(--line-2)}
+th{font-size:var(--fs-label);font-weight:800;color:var(--ink-3);background:var(--paper-2);
+  letter-spacing:.04em;border-bottom:2px solid var(--line)}
+/* ★ 9 行 4 列の表に縦の手がかりがなく、「聞く前の範囲」と「聞いたあとの範囲」が
+   同じ見た目で並んでいました。1 行おきに地を敷いて、目を横へ渡します。 */
+tbody tr:nth-child(even){background:#f9fbfe}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--line-2)}
+tr.on td{background:var(--hit-soft);color:var(--hit);font-weight:800}
+td.num,th.num{font-variant-numeric:tabular-nums}
+td.stop{color:var(--stop);font-weight:800}
+
+/* ── 記録 ────────────────────────────────────────────────────────── */
+.log{display:flex;flex-wrap:wrap;gap:9px;list-style:none;margin:0;padding:0}
+.log li{display:inline-flex;align-items:baseline;gap:8px;padding:7px 14px;border-radius:999px;
+  background:var(--paper-2);border:1px solid var(--line);font-size:var(--fs-body);color:var(--ink-3);
+  font-weight:600}
+.log li b{font-size:1.12rem;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums}
+.log li.hit{background:var(--hit-soft);border-color:var(--hit);color:var(--hit)}
+.log li.hit b{color:var(--hit)}
+.log li.none{background:none;border-style:dashed;color:var(--ink-4)}
+
+/* ── 理解の確認 ──────────────────────────────────────────────────── */
+.quiz{border:1px solid var(--line);border-top:3px solid var(--main);border-radius:var(--r);
+  background:var(--paper);padding:24px;margin-top:26px;box-shadow:var(--shadow-2)}
+.quiz .qtag{display:inline-block;padding:4px 11px;border-radius:7px;font-size:var(--fs-label);font-weight:800;
+  background:var(--main-soft);color:var(--main-deep);margin-right:12px;letter-spacing:.06em}
+.quiz h3{display:inline}
+.quiz .qq{margin:16px 0 15px;font-weight:700;font-size:1.06rem}
+.qopts{display:flex;gap:10px;flex-wrap:wrap}
+.qopt{border:1px solid var(--line);background:#fff;border-radius:10px;padding:12px 18px;
+  min-height:48px;font-size:var(--fs-body);font-weight:700;text-align:left;box-shadow:var(--shadow-1)}
+.qopt:hover{border-color:var(--main);transform:translateY(-1px)}
+.qopt:active{transform:translateY(1px)}
+.qopt.ok{background:var(--hit-soft);border-color:var(--hit);color:var(--hit)}
+.qopt.ng{background:var(--stop-soft);border-color:var(--stop-line);color:var(--stop)}
+.qopt.chosen{box-shadow:0 0 0 2px var(--ink) inset}
+.qhead{margin-top:18px;font-weight:800;font-size:1.06rem}
+.qhead.ok{color:var(--hit)} .qhead.ng{color:var(--stop)}
+.qwhy{margin-top:8px;color:var(--ink-2);font-size:var(--fs-body);display:none}
+.qwhy.on{display:block}
+
+/* ── 折りたたみ ──────────────────────────────────────────────────── */
+details{margin-top:26px;border:1px solid var(--line);border-radius:var(--r);
+  background:var(--paper);box-shadow:var(--shadow-1);overflow:hidden}
+summary{cursor:pointer;font-weight:800;color:var(--main-deep);font-size:1.06rem;
+  padding:15px 22px;list-style:none;display:flex;align-items:center;gap:13px}
+summary::-webkit-details-marker{display:none}
+/* ★ 山形を主軸色の座布団に乗せて、「押せる」ことを形で出します。
+   もとは地と同じ白の上に線が 2 本あるだけで、開く前は控えの中身が見えませんでした。 */
+summary::before{content:"";width:28px;height:28px;border-radius:9px;flex:0 0 auto;
+  background:var(--main-soft) no-repeat center;
+  background-image:linear-gradient(var(--main-deep),var(--main-deep)),
+                   linear-gradient(var(--main-deep),var(--main-deep));
+  background-size:9px 2px,2px 9px;
+  background-position:center,center;
+  transition:background-size .2s}
+details[open] summary::before{background-size:9px 2px,2px 0}
+summary:hover{background:var(--paper-2)}
+details[open] summary{background:var(--paper-2)}
+details .dbody{padding:6px 22px 22px;border-top:1px solid var(--line-2)}
+details .dbody p{color:var(--ink-2);margin-top:12px}
+
+/* ── 誌面からの図 ────────────────────────────────────────────────── */
+/* ★ 誌面は裏づけです。押して動くものと同じ影だと、主役が入れ替わって見えます。 */
+.bookfig{margin:0;background:#fff;border:1px solid var(--line);border-radius:var(--r);
+  overflow:hidden;box-shadow:var(--shadow-1)}
+.bookfig .diagram-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.bookfig img{display:block;width:100%;height:auto;background:#fff;min-width:var(--fig-min)}
+.bookfig figcaption{padding:15px 18px 16px;font-size:var(--fs-body);font-weight:650;color:var(--ink-2);
+  border-top:1px solid var(--line-2);background:var(--paper-2);
+  border-left:3px solid var(--main-lit)}
+.bookfig cite{display:block;margin-top:6px;font-style:normal;font-size:var(--fs-label);font-weight:700;
+  color:var(--ink-4);letter-spacing:.03em}
+.bookfig.empty .bfbox{display:grid;place-items:center;min-height:140px;background:var(--paper-2);
+  border-bottom:1px dashed var(--line)}
+.bookfig .bfnote{font-size:var(--fs-body);color:var(--ink-4)}
+.figrow{display:grid;grid-template-columns:minmax(0,1fr);gap:20px;margin:22px auto 0;
+  align-items:start;max-width:1100px}
+.figcol{display:grid;gap:20px;min-width:0}
+
+/* ── 数の札 ──────────────────────────────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:16px;margin-top:22px}
+.stat{position:relative;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
+  padding:22px 16px 18px;text-align:center;box-shadow:var(--shadow-1);overflow:hidden}
+/* ★ 4 枚が同じ重さで並ぶと、どれを見ればよいかが読めません。
+   いま見ているもの（または、その章の芯の数）だけを主軸色で持ち上げます。 */
+.stat.hi{border-color:var(--main-lit);background:linear-gradient(180deg,#f7f5fd,var(--paper) 58%);
+  box-shadow:0 2px 4px rgba(20,29,46,.05),0 14px 30px -22px rgba(76,63,120,.9)}
+.stat.hi::before{content:"";position:absolute;inset:0 0 auto 0;height:4px;
+  background:linear-gradient(90deg,var(--main-lit),var(--main))}
+.stat .sv{font-size:2.4rem;font-weight:800;line-height:1.02;font-variant-numeric:tabular-nums;
+  letter-spacing:-.015em}
+.stat.hi .sv{color:var(--main-deep)}
+/* ★ 単位は数に寄り添わせます。行の中で浮いていると、数と単位が別のものに見えます。 */
+.stat .su{font-size:var(--fs-label);font-weight:800;margin-left:3px;color:var(--ink-4);
+  vertical-align:.14em}
+.stat .sl{font-size:var(--fs-body);font-weight:800;color:var(--ink-2);margin-top:9px}
+.stat .sn{font-size:var(--fs-label);color:var(--ink-4);margin-top:4px}
+
+/* ── 3 条件のカード ──────────────────────────────────────────────── */
+/* ★ 入る数だけ並べます。repeat(3,1fr) を 1050px で 1 列に落としていたので、
+   998px 幅のカードの右端に番号だけが離れて立っていました。 */
+.condgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+/* ★ flex にして、下の例（.cx）を 3 枚とも底にそろえます。
+   もとは本文の行数でずれ、点線が 3 枚バラバラの高さに出ていました。 */
+.condcard{position:relative;display:flex;flex-direction:column;
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--r);padding:24px 22px 22px;box-shadow:var(--shadow-1);
+  transition:transform .18s,box-shadow .18s}
+.condcard:hover{transform:translateY(-2px);
+  box-shadow:0 2px 4px rgba(20,29,46,.05),0 18px 36px -24px rgba(20,29,46,.5)}
+.condcard .ci{width:42px;height:42px;border-radius:12px;color:#fff;display:grid;place-items:center;
+  margin-bottom:14px;background:linear-gradient(145deg,var(--main-lit),var(--main));
+  box-shadow:0 5px 14px -7px rgba(76,63,120,.9)}
+.condcard .ci svg{width:21px;height:21px}
+/* ★ 番号は #e8edf5 で、白地の上にほとんど残っていませんでした。
+   3 つの条件の順を示す唯一の手がかりなので、読める濃さまで上げます。 */
+.condcard .cn{position:absolute;top:20px;right:22px;font-size:1.55rem;font-weight:800;
+  color:var(--main-lit);line-height:1;font-variant-numeric:tabular-nums}
+.condcard h3{margin-bottom:8px}
+.condcard p{color:var(--ink-2);font-size:var(--fs-body)}
+.condcard .cx{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);
+  font-size:var(--fs-body);color:var(--ink-3)}
+.condcard p+.cx{margin-top:auto}
+
+/* ── 細い帯 ──────────────────────────────────────────────────────── */
+/* ★ 話題の変わり目。棒と字だけだと、章の中のどこで話が変わったのかが読めません。
+   上の余白を増やし（40→54px）、字を 1 段濃くして、線を主軸色から地の線へ渡します。 */
+.rail{display:flex;align-items:center;gap:13px;font-size:var(--fs-label);font-weight:800;
+  color:var(--ink-2);letter-spacing:.1em;margin:54px 0 18px}
+.rail span{width:30px;height:3px;border-radius:2px;flex:0 0 auto;background:var(--main)}
+.rail::after{content:"";flex:1;height:1px;
+  background:linear-gradient(90deg,var(--line),var(--line-2))}
+
+/* ── つまみの帯 ──────────────────────────────────────────────────────
+   2 枚のパネルを動かすつまみを、地の上に裸で置かないための器。
+   第5章の「進む／最初から」が、どのパネルにも盤にも属さずに浮いていました。 */
+.stepbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:20px;
+  padding:14px 22px;background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--r);box-shadow:var(--shadow-1)}
+.stepbar .note{color:var(--ink-3);font-weight:700;margin-left:auto}
+
+/* ── 下の移動 ────────────────────────────────────────────────────── */
+.pager{display:flex;justify-content:space-between;gap:14px;margin-top:46px}
+.pager .btn{min-width:200px;padding:15px 22px;font-weight:800}
+.foot{margin-top:46px;padding:26px 0 56px;border-top:1px solid var(--line);
+  color:var(--ink-4);font-size:var(--fs-label);display:flex;justify-content:space-between;gap:16px;
+  flex-wrap:wrap;font-weight:600}
+
+/* ── 折返し ──────────────────────────────────────────────────────── */
+@media(max-width:1050px){
+  .wrap{padding:0 26px}
+  .grid-main{grid-template-columns:minmax(0,1fr)}
+  .hero{padding:38px 30px 34px;border-radius:18px}
+  .hero::after{font-size:13rem;bottom:-46px}
+  .herogrid{grid-template-columns:minmax(0,1fr);gap:24px;align-items:start}
+  /* ★ 章ナビが 2 段・3 段になります。段の間に手がかりがないと、行が続けて読まれます。
+     段ごとに下線を出し、いま見ている章だけを主軸色にします。 */
+  .chapters{grid-template-columns:repeat(3,1fr);border-bottom:none;row-gap:0}
+  .chapter{border-bottom-color:var(--line-2)}
+  .condcard .cn{top:22px}
+}
+@media(max-width:760px){
+  .wrap{padding:0 18px}
+  .chapters{grid-template-columns:repeat(2,1fr)}
+  .cols{grid-template-columns:1fr}
+  .grid-main.two{grid-template-columns:minmax(0,1fr)}
+  .section-head{flex-direction:column;align-items:flex-start}
+  .hero{padding:32px 24px 30px}
+  .hero::after{display:none}
+  .herocard{padding:18px 20px}
+  .lab{padding:22px 16px}
+  .panel-top,.panel-body{padding-left:18px;padding-right:18px}
+  .stepbar{padding:14px 18px}
+  .diagram-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .diagram-scroll>svg{min-width:640px}
+  th,td{padding:11px 8px}
+}
+@media(max-width:560px){
+  /* ★ 科目名は表紙の符丁（LESSON 01 ／ アルゴリズムとデータ構造）にも出ています。
+     500px では英語が 2 行に折れて、貼りつく帯だけで 72px を使っていました。 */
+  .brand .course{display:none}
+  /* ★ 500px の窓では 2 列だと章の題が 2 行に割れます。1 列にして、段ごとに読ませます。 */
+  .chapters{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr 1fr}
+}
+@media(max-width:430px){
+  .pager{flex-direction:column}
+  .pager .btn{min-width:0}
+}
+</style></head><body><div id="app"></div><script>/* ═════ 図（誌面からの切り出し）═════ */
+var FIGS = {
+  "guess-slow": {src: "", w: 1100, h: 986, cap: "端から順に聞くと、1 回に 1 つしか消えません", cite: "『なっとく！アルゴリズム』第1章 1.1"},
+  "guess-50": {src: "", w: 1100, h: 232, cap: "50 を聞くと、小さい側の半分がまとめて消えます", cite: "『なっとく！アルゴリズム』第1章 1.1"},
+  "guess-75": {src: "", w: 1100, h: 240, cap: "75 は大きすぎました。残りのまた半分が消えます", cite: "『なっとく！アルゴリズム』第1章 1.1"},
+  "guess-yes": {src: "", w: 1100, h: 235, cap: "63、そして 57 で当たり", cite: "『なっとく！アルゴリズム』第1章 1.1"},
+  "halving": {src: "", w: 1100, h: 319, cap: "100 件は、7 回で 1 件になります", cite: "『なっとく！アルゴリズム』第1章 1.1"},
+  "dictionary": {src: "", w: 1100, h: 444, cap: "24 万語の辞書でも 18 回", cite: "『なっとく！アルゴリズム』第1章 1.2"},
+  "log-table": {src: "", w: 926, h: 709, cap: "対数は、指数をひっくり返したもの", cite: "『なっとく！アルゴリズム』第1章 1.1"},
+  "def-algo": {src: "", w: 1100, h: 423, cap: "手順とレシピの違いを、あいまいさの有無で分けています", cite: "『アルゴリズム図鑑 増補改訂版』序章 0-1 アルゴリズムとは？"},
+  "any-input": {src: "", w: 1100, h: 445, cap: "1 つの入力例を解けても、手順とは呼べません", cite: "『アルゴリズム図鑑 増補改訂版』序章 0-1 アルゴリズムとは？"},
+  "loop-forever": {src: "", w: 1100, h: 645, cap: "どこで終わるかを書かないと、手順は止まりません", cite: "『なっとく！アルゴリズム』第3章 3.2 基本ケースと再帰ケース"},
+  "base-case": {src: "", w: 1100, h: 273, cap: "終わる条件を足すと、止まるようになります", cite: "『なっとく！アルゴリズム』第3章 3.2 基本ケースと再帰ケース"},
+  "linear-steps": {src: "", w: 1100, h: 931, cap: "見つかるまで、1 つずつ比べます", cite: "『アルゴリズム図鑑 増補改訂版』3-1 線形探索"},
+  "binary-mid": {src: "", w: 1100, h: 443, cap: "まず、真ん中にある数を調べます", cite: "『アルゴリズム図鑑 増補改訂版』3-2 2分探索"},
+  "binary-steps": {src: "", w: 1100, h: 1477, cap: "必要のなくなった数は、候補から外します（灰色）", cite: "『アルゴリズム図鑑 増補改訂版』3-2 2分探索"}
+};
+var FIGS_PUBLIC = true;
+
+
+/* ═════ core.js ═════ */
+/* ============================================================================
+   中核 — 状態・差分更新・委譲
+
+   ★ 押しても図とスクロールとフォーカスが飛ばないのは、この差分更新のおかげです。
+     `#app.innerHTML` を毎回入れ替えると、SVG も入力欄も作り直されて位置が跳ねます。
+     差分の中核（nodeKey / compatible / patchNode / patchChildren / patchTree）は
+     基準版 論理回路_単体版.html の実装をそのまま使っています（2026-09-20）。
+   ============================================================================ */
+
+var $ = function (sel) { return document.querySelector(sel); };
+
+/* 差分のときに「同じ部品」と見なす目印。ここに無い属性は、位置だけで照合されます。 */
+var keyAttributes = [
+  "id", "data-page", "data-seg", "data-way", "data-mode", "data-row",
+  "data-ask", "data-reply", "data-step", "data-scale", "data-fix",
+  "data-qopt", "data-quiz", "data-open", "data-run", "data-field"
+];
+
+function nodeKey(node) {
+  if (node.nodeType !== 1) return null;
+  for (var i = 0; i < keyAttributes.length; i++) {
+    var name = keyAttributes[i];
+    if (node.hasAttribute(name)) return name + ":" + node.getAttribute(name);
+  }
+  return null;
+}
+
+function compatible(a, b) {
+  return a.nodeType === b.nodeType && a.nodeName === b.nodeName && a.namespaceURI === b.namespaceURI;
+}
+
+function patchNode(current, next) {
+  if (current.nodeType !== 1) {
+    if (current.nodeValue !== next.nodeValue) current.nodeValue = next.nodeValue;
+    return;
+  }
+  var attrs = [].slice.call(current.attributes);
+  for (var i = 0; i < attrs.length; i++) {
+    var attr = attrs[i];
+    /* 開いている折りたたみは、描き直しで閉じない */
+    if (attr.name === "open" && current.tagName === "DETAILS") continue;
+    if (!next.hasAttribute(attr.name)) current.removeAttribute(attr.name);
+  }
+  var nattrs = [].slice.call(next.attributes);
+  for (var j = 0; j < nattrs.length; j++) {
+    if (current.getAttribute(nattrs[j].name) !== nattrs[j].value) current.setAttribute(nattrs[j].name, nattrs[j].value);
+  }
+  patchChildren(current, next);
+  if (current.tagName === "INPUT" && current.value !== next.value) current.value = next.value;
+  if (current.tagName === "SELECT" && current.value !== next.value) current.value = next.value;
+}
+
+function patchChildren(current, next) {
+  var wanted = [].slice.call(next.childNodes);
+  for (var i = 0; i < wanted.length; i++) {
+    var target = wanted[i], key = nodeKey(target);
+    var existing = current.childNodes[i];
+    if (!existing || !compatible(existing, target) || nodeKey(existing) !== key) {
+      var match = null;
+      if (key) {
+        var rest = [].slice.call(current.childNodes).slice(i + 1);
+        for (var r = 0; r < rest.length; r++) {
+          if (nodeKey(rest[r]) === key && compatible(rest[r], target)) { match = rest[r]; break; }
+        }
+      }
+      if (match) {
+        current.insertBefore(match, existing || null);
+        existing = match;
+      } else {
+        current.insertBefore(target.cloneNode(true), existing || null);
+        continue;
+      }
+    }
+    patchNode(existing, target);
+  }
+  while (current.childNodes.length > wanted.length) current.lastChild.remove();
+}
+
+function patchTree(root, markup) {
+  var template = document.createElement("template");
+  template.innerHTML = markup;
+  patchChildren(root, template.content);
+}
+
+/* ── 状態 ────────────────────────────────────────────────────────────────
+   ★ 学生の回答（answers / checked）と、説明用の操作値（way / step …）を別に持ちます。
+     切り替えを押しても、答えた内容を上書きしません。 */
+var state = {
+  page: 0,
+  big: false,
+
+  /* 02 自分で当てる（練習） */
+  tryLo: 1, tryHi: 100, tryTarget: 0, tryLog: [], tryDone: false, tryStarted: false,
+
+  /* 03 2つの聞き方 */
+  way: "lin", step: -1, scale: "100",
+
+  /* 04 機械に当てさせる */
+  mLo: 1, mHi: 100, mRange: "100", mLog: [], mDone: false,
+
+  /* 05 手順の条件 */
+  vStep: 0, endMode: "hazusu", endStep: 0,
+
+  /* 学生の回答（説明の操作では触らない） */
+  answers: {}, checked: {}
+};
+
+function act(fn, el) {
+  fn();
+  render();
+  if (el && el.isConnected && document.activeElement === el) el.focus({ preventScroll: true });
+}
+
+function showPage(n) {
+  state.page = n;
+  render();
+  var m = $("#main");
+  if (m) m.scrollIntoView({ block: "start", behavior: "instant" });
+}
+
+function render() {
+  patchTree($("#app"), shell());
+  document.documentElement.classList.toggle("big", state.big);
+}
+
+function bind() {
+  var root = $("#app");
+
+  root.addEventListener("click", function (event) {
+    var e = event.target.closest("button");
+    if (!e || !root.contains(e) || e.disabled) return;
+    var d = e.dataset;
+    if (d.page !== undefined) return showPage(+d.page);
+    if (e.id === "bigtoggle") return act(function () { state.big = !state.big; }, e);
+    if (handleClick(d, e)) return;
+  });
+
+  root.addEventListener("input", function (event) {
+    var t = event.target;
+    if (t.tagName !== "INPUT") return;
+    handleInput(t.dataset, t);
+  });
+
+  root.addEventListener("keydown", function (event) {
+    if (event.key !== "Enter") return;
+    var t = event.target;
+    if (t.tagName !== "INPUT") return;
+    var form = t.dataset.enter;
+    if (!form) return;
+    event.preventDefault();
+    var b = root.querySelector('[data-run="' + form + '"]');
+    if (b && !b.disabled) b.click();
+  });
+}
+
+
+/* ═════ model.js ═════ */
+/* ============================================================================
+   計算 — 数当ての 2 つの聞き方、回数、止まらない書き方
+
+   ★ 数はすべて実測です。正本は _build/01/spec/10_数値正本.md。
+     ここで求めた値と、画面に出る値と、正本の表は一致していなければなりません。
+   ============================================================================ */
+
+var LO = 1, HI = 100, TARGET = 97;   /* 03 の実演で探す数 */
+
+/* 端から順に聞く（線形探索）。聞いた数は残りから外す。 */
+function planLinear(target) {
+  var out = [];
+  for (var g = LO; g <= target; g++) {
+    out.push({ g: g, lo: (g === target ? g : g + 1), hi: HI, hit: g === target });
+  }
+  return out;
+}
+
+/* 残っている範囲の真ん中を聞く（二分探索）。 */
+function planBinary(target) {
+  var out = [], lo = LO, hi = HI;
+  for (;;) {
+    var m = Math.floor((lo + hi) / 2);
+    if (m === target) { out.push({ g: m, lo: lo, hi: hi, hit: true }); return out; }
+    if (m < target) { out.push({ g: m, lo: m + 1, hi: hi, hit: false }); lo = m + 1; }
+    else { out.push({ g: m, lo: lo, hi: m - 1, hit: false }); hi = m - 1; }
+  }
+}
+
+function plan(way, target) {
+  return way === "lin" ? planLinear(target) : planBinary(target);
+}
+
+/* 2 を何回かけると件数を超えるか ＝ 真ん中を聞き続けたときの最大の回数。
+   ★ log2(100) は 6.64… で 7 ではありません。7 は「それを超える最初の整数」です。 */
+function askMax(n) {
+  var q = 0, p = 1;
+  while (p <= n) { p *= 2; q++; }
+  return q;
+}
+
+/* 件数の段。数の意味を必ず添える（裸の数字を画面に出さない）。 */
+var SCALES = [
+  { k: "100",  n: 100,          label: "100",    what: "教室の人数くらい" },
+  { k: "1e6",  n: 1000000,      label: "100 万", what: "大きな市の人口くらい" },
+  { k: "1.2e8",n: 122680000,    label: "1.2 億", what: "日本の人口" },
+  { k: "8.3e9",n: 8300000000,   label: "83 億",  what: "世界の人口" }
+];
+
+/* 聞いた数を「外す」か「残す」か。残すと縮まないことがある。
+   正解 100 なら 50,75,87,93,96,98,99 と進み、以後 99 を聞き続ける。 */
+function planEnd(keep, target, cap) {
+  var out = [], lo = LO, hi = HI;
+  cap = cap || 12;
+  for (var i = 0; i < cap; i++) {
+    var g = Math.floor((lo + hi) / 2);
+    var row = { g: g, lo: lo, hi: hi, hit: g === target };
+    out.push(row);
+    if (row.hit) break;
+    if (target > g) lo = keep ? g : g + 1;
+    else hi = keep ? g : g - 1;
+    row.after = [lo, hi];
+    if (out.length >= 3 && out[out.length - 1].g === out[out.length - 2].g
+        && out[out.length - 2].g === out[out.length - 3].g) break;
+  }
+  return out;
+}
+
+/* 機械が次に聞く数と、残りの件数から「あと最大で何回」 */
+function midOf(lo, hi) { return Math.floor((lo + hi) / 2); }
+function restMax(lo, hi) { return askMax(hi - lo + 1); }
+
+function fmt(n) { return n.toLocaleString("en-US"); }
+
+
+/* ═════ ch1.js ═════ */
+/* ═════ 01 アルゴリズムとは ═════════════════════════════════════════════ */
+
+var SCENES = [
+  {
+    k: "search", t: "探す",
+    b: "打ち込んだ言葉を含むページを選び出し、並べて返します。候補が多いので、"
+     + "端から順に調べると時間がかかりすぎます。",
+    n: "第 2 回で扱います"
+  },
+  {
+    k: "sort", t: "並べる",
+    b: "投稿や商品を、どの順で見せるかを決めます。並べ替えができていると、"
+     + "そのあとの探し方が変わります。",
+    n: "第 6 回と第 8 回で扱います"
+  },
+  {
+    k: "route", t: "道を決める",
+    b: "駅と路線を線でつないだ図の上で、乗り換えの少ない道や、短い道を探します。",
+    n: "第 11 回と第 14 回で扱います"
+  }
+];
+
+var COND = [
+  {
+    k: "clear", t: "あいまいさがない",
+    b: "次に何をするかが、読む人によって変わらないこと。",
+    ex: "「真ん中あたりを聞く」では、どの範囲の真ん中かが決まりません。"
+  },
+  {
+    k: "any", t: "どんな入力でも",
+    b: "1 つの例だけでなく、どの数が答えでも同じ手順で正しく当てられること。",
+    ex: "たまたま 1 回当たった、では手順とは呼べません。"
+  },
+  {
+    k: "stop", t: "必ず終わる",
+    b: "いつか止まること。",
+    ex: "範囲が縮まない書き方をすると、同じ数を聞き続けて止まらなくなります。"
+  }
+];
+
+/* 場面ごとのポンチ絵。SVG で描く（画像生成で描き直さない）。 */
+var SCENE_ART = {
+  search: function () {
+    var W = 620, H = 300, cols = 10;
+    var h = '<svg viewBox="0 0 ' + W + " " + H + '" width="100%" height="' + H + '" role="img" '
+      + 'aria-label="たくさんの候補から、目当ての 1 件を探す図">';
+    /* 候補の帯 */
+    for (var r = 0; r < 4; r++) {
+      for (var c = 0; c < cols; c++) {
+        var hit = (r === 2 && c === 6);
+        h += '<rect x="' + (30 + c * 56) + '" y="' + (40 + r * 48) + '" width="46" height="28" rx="6" '
+          + 'fill="' + (hit ? "var(--hit-soft)" : "#fff") + '" stroke="'
+          + (hit ? "var(--hit)" : "var(--line)") + '" stroke-width="' + (hit ? 2.6 : 1.3) + '"/>';
+      }
+    }
+    h += '<circle cx="389" cy="150" r="30" fill="none" stroke="var(--ask)" stroke-width="2.8"/>'
+      + '<path d="M410 171 l20 20" stroke="var(--ask)" stroke-width="3.6" stroke-linecap="round"/>'
+      + '<text text-anchor="start" x="30" y="268" font-size="17" fill="var(--ink-3)">'
+      + "候補は 40 件。目当ては 1 件。端から順だと、運が悪いと 40 回見ます。</text>"
+      + "</svg>";
+    return h;
+  },
+  sort: function () {
+    var W = 620, H = 300;
+    var before = [3, 9, 8, 2, 1, 4, 6, 5, 7], after = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    function row(vals, y, label, on) {
+      var g = '<text text-anchor="start" x="30" y="' + (y - 14) + '" font-size="16" '
+        + 'font-weight="700" fill="var(--ink-4)">' + label + "</text>";
+      for (var i = 0; i < vals.length; i++) {
+        g += '<rect x="' + (30 + i * 60) + '" y="' + y + '" width="48" height="38" rx="8" '
+          + 'fill="' + (on ? "var(--main-soft)" : "#fff") + '" stroke="'
+          + (on ? "var(--main)" : "var(--line)") + '" stroke-width="2"/>'
+          + '<text text-anchor="middle" x="' + (30 + i * 60 + 24) + '" y="' + (y + 26)
+          + '" font-size="20" font-weight="800" fill="var(--ink)">' + vals[i] + "</text>";
+      }
+      return g;
+    }
+    return '<svg viewBox="0 0 ' + W + " " + H + '" width="100%" height="' + H + '" role="img" '
+      + 'aria-label="ばらばらの並びを、小さい順に並べ替える図">'
+      + row(before, 54, "ばらばら", false)
+      + '<path d="M310 110 v30" stroke="var(--ink-4)" stroke-width="2.6" stroke-linecap="round"/>'
+      + '<path d="M302 134 l8 9 8-9" stroke="var(--ink-4)" stroke-width="2.6" fill="none" '
+      + 'stroke-linecap="round" stroke-linejoin="round"/>'
+      + row(after, 176, "小さい順", true)
+      + '<text text-anchor="start" x="30" y="272" font-size="17" fill="var(--ink-3)">'
+      + "並んでいると、真ん中と比べるだけで片側を捨てられます。</text></svg>";
+  },
+  route: function () {
+    var W = 620, H = 300;
+    var pts = [[70, 196], [170, 110], [280, 194], [390, 82], [500, 166], [560, 102]];
+    var h = '<svg viewBox="0 0 ' + W + " " + H + '" width="100%" height="' + H + '" role="img" '
+      + 'aria-label="駅と路線をつないだ図の上で、短い道を探す図">';
+    var edges = [[0,1],[1,2],[2,3],[3,4],[4,5],[0,2],[1,3],[2,4]];
+    for (var e = 0; e < edges.length; e++) {
+      var a = pts[edges[e][0]], b = pts[edges[e][1]];
+      var on = (e < 5);
+      h += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1]
+        + '" stroke="' + (on ? "var(--main)" : "var(--line)") + '" stroke-width="'
+        + (on ? 3.6 : 2.2) + '"' + (on ? "" : ' stroke-dasharray="7 6"') + "/>";
+    }
+    for (var i = 0; i < pts.length; i++) {
+      h += '<circle cx="' + pts[i][0] + '" cy="' + pts[i][1] + '" r="15" fill="#fff" '
+        + 'stroke="var(--main)" stroke-width="2.8"/>'
+        + '<text text-anchor="middle" x="' + pts[i][0] + '" y="' + (pts[i][1] + 6)
+        + '" font-size="16" font-weight="800" fill="var(--main-deep)">'
+        + String.fromCharCode(65 + i) + "</text>";
+    }
+    return h + '<text text-anchor="start" x="30" y="272" font-size="17" fill="var(--ink-3)">'
+      + "A から F へ。線をどうたどるかで、乗り換えの数も時間も変わります。</text></svg>";
+  }
+};
+
+/* 3 条件を、数当ての 1 手に当てはめた小さな図 */
+function condCards() {
+  var icons = {
+    clear: '<path d="M5 12h14M12 5v14"/>',
+    any: '<path d="M4 7h16M4 12h16M4 17h16"/>',
+    stop: '<path d="M6 6l12 12M18 6L6 18"/>'
+  };
+  return '<div class="condgrid">' + COND.map(function (c, i) {
+    return '<div class="condcard"><div class="ci">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" '
+      + 'stroke-linecap="round">' + icons[c.k] + "</svg></div>"
+      + '<div class="cn">' + (i + 1) + "</div>"
+      + "<h3>" + c.t + "</h3><p>" + c.b + "</p>"
+      + '<p class="cx">' + c.ex + "</p></div>";
+  }).join("") + "</div>";
+}
+
+function renderWhat() {
+  var key = state.scene || "search";
+  var right = seg("scene", SCENES.map(function (s) { return { v: s.k, t: s.t }; }), key);
+  var sc = SCENES.filter(function (s) { return s.k === key; })[0];
+
+  var body = '<div class="lab"><div class="diagram-scroll">' + SCENE_ART[key]() + "</div></div>"
+    + '<div class="panel-body"><p>' + sc.b + "</p></div>";
+
+  var side = '<div class="side">'
+    + panel("scenewhen", "この科目での置き場", sc.n,
+        '<div class="panel-body"><p>この 3 つは、どれも「たくさんの中から選ぶ」仕事です。'
+        + "選び方を決めておくと、同じ仕事にかかる手間が変わります。</p>"
+        + "<p>第 1 回では、いちばん小さい形として <b>1 から 100 の数当て</b> を使います。</p></div>")
+    + panel("scenehow", "この回の進み方", null,
+        '<div class="panel-body"><p><b>1</b> 自分で当てて、回数を数える。</p>'
+        + "<p><b>2</b> 聞き方を 2 つ、1 手ずつ比べる。</p>"
+        + "<p><b>3</b> 機械に当てさせて、返事だけを返す。</p>"
+        + "<p><b>4</b> 手順として書けているかを確かめる。</p></div>")
+    + "</div>";
+
+  return head("01", "手順と呼べるもの、呼べないもの",
+      "身の回りで動いているものを 1 つ選び、そのあとで、手順と呼べる条件を確かめます。", right)
+    + '<div class="grid-main">' + panel("scenelab", "場面", sc.t, body) + side + "</div>"
+    + rail("手順と呼べるための条件")
+    + condCards()
+    + '<div class="figrow">'
+    + fig("def-algo", { cap: "1 つ目の条件を、参考書はレシピとの違いで説明しています。"
+        + "料理の「少々」は人が読むぶんには通じますが、"
+        + "書かれたとおりにしか動かない相手には通じません。" })
+    + fig("any-input", { cap: "2 つ目の条件です。本の例題は 8 個の数の並べ替えで、"
+        + "この回の数当てとは題材が違いますが、1 つの例で答えが出ただけでは足りない、"
+        + "という点は同じです。" })
+    + "</div>"
+    + rail("同じ問題でも、聞き方で手間が変わります")
+    + '<div class="figrow">'
+    + fig("guess-slow", { cap: "1 から 100 の数当て。端から順に聞くと、1 回に 1 つしか消えません。" })
+    + '<div class="figcol">'
+    + fig("guess-50", { cap: "真ん中を聞くと、1 回で半分がまとめて消えます。" })
+    + fig("halving", { cap: "100 件は 7 回で 1 件になります。第 3 章で 1 手ずつ見ます。" })
+    + "</div></div>"
+    + quiz("q1",
+        { title: "止まらない手順", body: "次のうち、必ず終わるとは限らないのはどれですか。" },
+        ["範囲の真ん中を聞き、当たりでなければ、聞いた数を外して片側だけを残す",
+         "範囲の真ん中を聞き、当たりでなければ、聞いた数も入れて片側を残す",
+         "1 から順に 1 つずつ聞く"],
+        1,
+        "聞いた数を範囲に残すと、両端が動かないことがあります。そのとき範囲が縮まず、"
+        + "同じ数を聞き続けます。第 5 章で実際に動かします。")
+    + "<details><summary>アルゴリズムという言葉の由来</summary><div class=\"dbody\">"
+    + "<p>9 世紀に数の計算の方法を書いた学者アル・フワーリズミーの名前が、ラテン語に移るときに"
+    + "なまって algorismus になりました。はじめは筆算の手順そのものを指す語でしたが、"
+    + "いまは「あいまいさのない手順」全体を指します。</p>"
+    + "<p>データ構造は data structure。data はラテン語で「与えられたもの」、"
+    + "structure は「組み立てたもの」。コンピュータの中でデータをどう並べて置くかを決めたものを、"
+    + "この 2 語を組にして呼びます。第 3 回から扱います。</p></div></details>";
+}
+
+
+/* ═════ ch2.js ═════ */
+/* ═════ 02 数当てをやってみる ═══════════════════════════════════════════
+   学生が自分で当てる。回数だけが残る。ヒントは出さない。
+   ★ ここは練習です。何度でもやり直せます。提出はキット側の回のツールで行います
+     （第 6 章「問題演習・提出」は 2026-09-21 に外しました。正本は src/_parked/）。
+   ★ 「残り」から、いま聞いた数を外します。外さないと、1 回聞いた直後に
+     「残り 100 件」と出て、この章の主張（1 回で 1 件しか減らない聞き方がある）を
+     画面が自分で反証します。 */
+
+function tryStart() {
+  state.tryTarget = LO + Math.floor(Math.random() * (HI - LO + 1));
+  state.tryLo = LO; state.tryHi = HI;
+  state.tryLog = []; state.tryDone = false; state.tryStarted = true;
+  state.tryInput = "";
+}
+
+function tryAsk(n) {
+  if (!state.tryStarted || state.tryDone) return;
+  if (!(n >= LO && n <= HI)) { state.tryMsg = "1 から 100 までの整数を入れてください。"; return; }
+  state.tryMsg = "";
+  var t = state.tryTarget;
+  var row = { g: n, hit: n === t, reply: n < t ? "up" : "down" };
+  state.tryLog.push(row);
+  if (row.hit) { state.tryDone = true; state.tryLo = n; state.tryHi = n; }
+  else if (n < t) { state.tryLo = Math.max(state.tryLo, n + 1); }
+  else { state.tryHi = Math.min(state.tryHi, n - 1); }
+  state.tryInput = "";
+}
+
+function renderTry() {
+  var started = state.tryStarted, done = state.tryDone;
+  var n = state.tryLog.length;
+  var last = n ? state.tryLog[n - 1] : null;
+  var rest = done ? 1 : (state.tryHi - state.tryLo + 1);
+
+  var lab = '<div class="lab"><div class="diagram-scroll">'
+    + bandSvg(state.tryLo, state.tryHi, last ? last.g : 0, done,
+        { label: started ? ("残っているのは " + rest + " 件") : "始めると、ここに範囲が出ます" })
+    + "</div>"
+    + '<div class="lab-legend"><span><i></i>まだ残っている</span>'
+    + '<span><i class="drop"></i>返事で消えた</span></div></div>';
+
+  var result;
+  if (!started) {
+    result = '<div class="result"><div class="num">?</div><div>'
+      + '<div class="rh">1 から 100 までの整数を 1 つ、こちらが決めます</div>'
+      + '<div class="rt">数を入れると、「もっと大きい」「もっと小さい」「当たり」が返ります。'
+      + "何回で当たるかを数えてください。</div></div></div>";
+  } else if (done) {
+    result = '<div class="result hit"><div class="num">' + n + "</div><div>"
+      + '<div class="rh">' + n + " 回で当たりました。</div>"
+      + '<div class="rt">隣の人と回数を見せ合ってください。回数が違うなら、聞き方が違います。</div>'
+      + "</div></div>";
+  } else if (!last) {
+    /* 始めたが、まだ 1 回も聞いていない */
+    result = '<div class="result"><div class="num">0</div><div>'
+      + '<div class="rh">決めました。数を入れて「聞く」を押してください。</div>'
+      + '<div class="rt">残っているのは 1 から 100 の 100 件です。</div></div></div>';
+  } else {
+    result = '<div class="result"><div class="num">' + n + "</div><div>"
+      + '<div class="rh">' + last.g + " を聞きました。"
+      + (last.reply === "up" ? "もっと大きい" : "もっと小さい") + "。</div>"
+      + '<div class="rt">残っているのは ' + state.tryLo + " から " + state.tryHi
+      + " の " + rest + " 件です。</div></div></div>";
+  }
+
+  var pad = '<div class="panel-body"><div class="keypad">'
+    + '<input type="number" inputmode="numeric" min="1" max="100" data-field="tryInput" '
+    + 'data-enter="try" placeholder="1〜100" aria-label="聞く数" value="'
+    + (state.tryInput || "") + '"' + (started && !done ? "" : " disabled") + ">"
+    + '<button class="btn primary" data-run="try"' + (started && !done ? "" : " disabled")
+    + ">聞く</button>"
+    + '<button class="btn ghost" data-run="tryreset">' + (started ? "もう一度" : "始める") + "</button>"
+    + "</div>"
+    + (state.tryMsg ? '<p style="margin-top:10px;color:var(--stop);font-weight:700">'
+        + state.tryMsg + "</p>" : "")
+    + '<div style="margin-top:16px">' + logList(state.tryLog, "聞いた数がここに並びます") + "</div>"
+    + "</div>";
+
+  var side = '<div class="side">'
+    + panel("trycount", "いまの回数", started ? (done ? "終わり" : "とちゅう") : null,
+        '<div class="panel-body"><p style="font-size:2.4rem;font-weight:800;line-height:1.1">'
+        + n + '<span style="font-size:1rem;font-weight:700;color:var(--ink-4);margin-left:6px">'
+        + "回</span></p>"
+        + '<p style="color:var(--ink-2);margin-top:6px">残っている件数 '
+        + (started ? rest : 100) + "</p></div>")
+    + panel("trynote", "数えること", null,
+        '<div class="panel-body"><p>何回で当たったかだけを数えます。'
+        + "当て方は自由です。</p><p>同じ数を 2 回聞いても、回数には数えます。</p></div>")
+    + "</div>";
+
+  return head("02", "自分で当ててみる",
+      "1 から 100 までの整数を 1 つ、こちらが決めます。何回で当たるかを数えてください。")
+    + '<div class="grid-main">'
+    + panel("trylab", "数当て", "練習。何度でもやり直せます", lab + result + pad)
+    + side + "</div>"
+    + (done
+      ? rail("この 2 つは、こういう聞き方でした")
+        + '<div class="figrow">'
+        + fig("guess-slow", { cap: "端から順に聞くと、1 回に 1 つしか消えません。"
+            + "正解が 99 なら 99 回かかります。" })
+        + '<div class="figcol">'
+        + fig("guess-50") + fig("guess-75") + fig("guess-yes") + "</div></div>"
+        + quiz("q2",
+          { title: "回数の見当", body: "1 から 100 で、いちばん運が悪いときでも 7 回で当てられる聞き方があります。"
+              + "その聞き方は、1 回目にどの数を聞きますか。" },
+          ["1", "50", "100"], 1,
+          "残っている範囲の真ん中を聞きます。1 回の返事で、残りが半分以下になります。"
+          + "次の章で、1 手ずつ見ます。")
+      : "");
+}
+
+
+/* ═════ ch3.js ═════ */
+/* ═════ 03 2 つの聞き方 ═════════════════════════════════════════════════
+   端から順に聞く（線形探索）と、残っている範囲の真ん中を聞く（二分探索）を
+   1 手ずつ並べて比べる。★ 同じ量（残り）を出す 2 つの経路で、定義を変えない。 */
+
+var WAYS = [
+  { v: "lin", t: "端から順に聞く",
+    note: "端から順に聞きます。1、2、3 と 1 つずつ確かめます。この方法を線形探索と呼びます。" },
+  { v: "bin", t: "真ん中を聞く",
+    note: "残っている範囲の真ん中を聞きます。当たりでなければ、残りは半分以下になります。"
+        + "この方法を二分探索と呼びます。" }
+];
+
+function renderTwoWays() {
+  var way = state.way;
+  var rows = plan(way, TARGET);
+  var i = state.step;
+  var cur = i < 0 ? { lo: LO, hi: HI, g: 0, hit: false } : rows[i];
+  var done = i >= 0 && rows[i].hit;
+  var rest = done ? 1 : (cur.hi - cur.lo + 1);
+  var note = WAYS.filter(function (w) { return w.v === way; })[0].note;
+
+  var lab = '<div class="lab"><div class="diagram-scroll">'
+    + bandSvg(cur.lo, cur.hi, cur.g, done,
+        { label: i < 0 ? "進むを押すと、1 手ずつ動きます" : ("残っているのは " + rest + " 件") })
+    + "</div>"
+    + '<div class="lab-legend"><span><i></i>まだ残っている</span>'
+    + '<span><i class="drop"></i>返事で消えた</span></div></div>';
+
+  var result = '<div class="result' + (done ? " hit" : "") + '">'
+    + '<div class="num">' + (i + 1) + "</div><div>"
+    + '<div class="rh">' + (done
+        ? "当たりました。" + (i + 1) + " 回で見つかりました。"
+        : (i < 0 ? "1 から 100 までの整数のうち 97 を探します。"
+            : cur.g + " を聞きました。残りは " + cur.lo + " から " + cur.hi
+            + " の " + rest + " 件です。")) + "</div>"
+    + '<div class="rt">' + note + "</div></div></div>";
+
+  var ctrl = '<div class="panel-body"><div class="keypad">'
+    + '<button class="btn primary" data-step="next"' + (done ? " disabled" : "") + ">進む</button>"
+    + '<button class="btn" data-step="end"' + (done ? " disabled" : "") + ">最後まで</button>"
+    + '<button class="btn ghost" data-step="reset">最初から</button>'
+    + '<span style="margin-left:8px;color:var(--ink-3)">聞いた回数 <b>'
+    + (i + 1) + "</b>　残り <b>" + (i < 0 ? 100 : rest) + "</b> 件</span></div>"
+    + '<div style="margin-top:16px">'
+    + logList(rows.slice(0, i + 1).map(function (r) {
+        return { g: r.g, hit: r.hit, reply: r.g < TARGET ? "up" : "down" };
+      }), "聞いた数がここに並びます")
+    + "</div></div>";
+
+  /* 件数を増やしたときの最大の回数。★ 押すまで答えを出さない（予想してから開く）。
+     ★ 290px の右列に入れると列見出しが「端から順 に」と割れるので、本体側へ置く。 */
+  var opened = state.opened || {};
+  var tbl = "<table><thead><tr><th>件数</th><th>それが何の数か</th>"
+    + "<th>端から順に（最大）</th><th>真ん中を聞く（最大）</th></tr></thead><tbody>"
+    + SCALES.map(function (s) {
+      return '<tr data-row="' + s.k + '"><td><b>' + s.label + "</b></td>"
+        + '<td style="color:var(--ink-4)">' + s.what + "</td>"
+        + '<td class="num" style="color:var(--cool)">' + s.label + " 回</td>"
+        + '<td class="num">' + (opened[s.k]
+            ? '<b style="color:var(--main-deep);font-size:1.05rem">' + askMax(s.n) + " 回</b>"
+            : '<button class="btn ghost" data-scale="' + s.k
+              + '" style="padding:7px 16px">開く</button>') + "</td></tr>";
+    }).join("") + "</tbody></table>";
+
+  var side = '<div class="side">'
+    + panel("waynow", "いまの聞き方", null,
+        '<div class="panel-body"><p><b>' + WAYS.filter(function (w) { return w.v === way; })[0].t
+        + "</b></p><p style=\"color:var(--ink-2);margin-top:6px\">" + note + "</p>"
+        + '<p style="margin-top:12px;color:var(--ink-2)">'
+        + "97 を探すと、端から順なら 97 回、真ん中を聞くなら 5 回です。"
+        + "いちばん運が悪いときは、100 回と 7 回になります。</p></div>")
+    + panel("waywhy", "1 回の返事で何が起きるか", null,
+        '<div class="panel-body"><p>端から順に聞くと、外れた 1 件だけが残りから消えます。</p>'
+        + "<p>真ん中を聞くと、残るのは聞いた数より大きい側か小さい側のどちらか一方です。"
+        + "残りは半分以下になります。</p></div>")
+    + "</div>";
+
+  return head("03", "1 手ずつ、並べて比べる",
+      "1 から 100 までの整数のうち 97 を探します。タブで聞き方を切り替えてください。",
+      seg("way", WAYS.map(function (w) { return { v: w.v, t: w.t }; }), way))
+    + '<div class="grid-main">'
+    + panel("waylab", WAYS.filter(function (w) { return w.v === way; })[0].t,
+        "最大 " + (way === "lin" ? "100" : "7") + " 回", lab + result + ctrl)
+    + side + "</div>"
+    + rail("本で見ると、こう描かれています")
+    + '<div class="figrow">'
+    + fig(way === "lin" ? "linear-steps" : "binary-steps",
+        { cap: way === "lin"
+            ? "端から順に、1 つずつ比べます。外れても、消えるのは 1 つだけです。"
+            : "真ん中と比べ、必要のなくなった数は灰色に落ちます。1 回で半分が消えます。" })
+    + '<div class="figcol">'
+    + fig(way === "lin" ? "binary-mid" : "halving")
+    + panel("waynum", "この章の数", null,
+        '<div class="panel-body">' + statRow([
+          { v: 100, l: "端から順（最大）", n: "件数と同じ" },
+          { v: 7, l: "真ん中（最大）", n: "1〜100", hi: true }
+        ]) + "</div>")
+    + "</div></div>"
+    + '<div style="margin-top:22px">'
+    + panel("scales", "件数を増やすと、回数はどうなるか", "予想してから開いてください",
+        tbl + '<div class="panel-body" style="padding-top:16px">'
+        + "<p>件数が 8300 万倍になっても、真ん中を聞く方法なら回数は 5 倍にもなりません。</p></div>")
+    + "</div>"
+    + "<details><summary>必要な回数に付いている名前</summary><div class=\"dbody\">"
+    + "<p>必要な回数は、2 を何回かけると件数を超えるかで決まります。"
+    + "この「2 を何回かけるか」を表す言葉が、2 を底とする対数です。</p>"
+    + "<p>2 を 7 回かけると 128 で、100 を超えます。だから 1 から 100 なら 7 回です。"
+    + "2 を底とする 100 の対数は 6.64… で、質問の回数はそれを超える最初の整数の 7 になります。"
+    + "ここでは式を使わず、上の表から読み取ります。指数と対数は、必修の情報数理入門で扱った内容です。</p>"
+    + "<p>当たりでなければ、残るのは聞いた数より大きい側か小さい側のどちらか一方です。"
+    + "1 回の返事で、候補が 2 つの組に分かれます。100 は 50、25、12、6、3、1 と減り、"
+    + "6 回外れても残りは 1 件。7 回目に必ず当たります。</p>"
+    + '<div class="figrow" style="margin-top:6px">'
+    + fig("log-table", { cap: "2 を何回かけるか、が対数です。本では 10 を底にした例も並べています。" })
+    + '<div class="figcol">'
+    + fig("halving", { cap: "本の図は端数を切り上げるので 100→50→25→13→7→4→2→1。"
+        + "こちらは切り捨てで 100→50→25→12→6→3→1。<b>どちらも 7 回</b>です。" })
+    + fig("dictionary", { cap: "24 万語の辞書でも 18 回。件数が 2400 倍でも、回数は 3 倍にもなりません。" })
+    + "</div></div></div></details>"
+    + quiz("q3",
+        { title: "残り方のちがい", body: "1 から 100 で、1 回目に 50 を聞いて「もっと大きい」と返りました。"
+            + "真ん中を聞く方法なら、残っているのは何件ですか。" },
+        ["99 件", "50 件", "51 件"], 1,
+        "51 から 100 の 50 件です。聞いた 50 は残りから外れます。"
+        + "端から順に聞く方法で 1 を聞いた場合は、2 から 100 の 99 件しか減りません。");
+}
+
+
+/* ═════ ch4.js ═════ */
+/* ═════ 04 機械に当てさせる ═════════════════════════════════════════════
+   学生が心の中で数を決め、機械が真ん中を聞く。学生は 3 つのボタンで答える。
+   ★ 四角の「数」は減りません。減るのは色のついた数です。 */
+
+var RANGES = [
+  { k: "100", hi: 100, t: "1〜100", what: "教室の人数くらい" },
+  { k: "1e6", hi: 1000000, t: "1〜100 万", what: "大きな市の人口くらい" },
+  { k: "1.2e8", hi: 122680000, t: "1〜1.2 億", what: "日本の人口" },
+  { k: "8.3e9", hi: 8300000000, t: "1〜83 億", what: "世界の人口" }
+];
+
+function mRangeOf() {
+  var k = state.mRange;
+  for (var i = 0; i < RANGES.length; i++) if (RANGES[i].k === k) return RANGES[i];
+  return RANGES[0];
+}
+
+function mReset() {
+  var r = mRangeOf();
+  state.mLo = 1; state.mHi = r.hi; state.mLog = []; state.mDone = false; state.mStuck = "";
+}
+
+function mReply(kind) {
+  if (state.mDone) return;
+  var g = midOf(state.mLo, state.mHi);
+  if (kind === "hit") {
+    state.mLog.push({ g: g, hit: true });
+    state.mDone = true;
+    return;
+  }
+  state.mLog.push({ g: g, hit: false, reply: kind });
+  if (kind === "up") state.mLo = g + 1; else state.mHi = g - 1;
+  if (state.mLo > state.mHi) {
+    /* 返事が食い違ったとき。★ 黙って壊れない。 */
+    state.mStuck = "返事が食い違っています。決めた数を思い出して、もう一度始めてください。";
+    state.mDone = true;
+  }
+}
+
+function renderMachine() {
+  var r = mRangeOf();
+  var done = state.mDone;
+  var n = state.mLog.length;
+  var total = askMax(r.hi);
+  var left = done ? 0 : restMax(state.mLo, state.mHi);
+  var g = done ? (n ? state.mLog[n - 1].g : 0) : midOf(state.mLo, state.mHi);
+  var small = r.hi <= 100;
+
+  var lab = '<div class="lab">'
+    + (small
+        ? '<div class="diagram-scroll">'
+          + bandSvg(state.mLo, Math.min(state.mHi, 100), done ? 0 : g, done && !state.mStuck,
+              { label: "残っているのは " + fmt(state.mHi - state.mLo + 1) + " 件" })
+          + "</div>"
+        : '<p style="text-align:center;font-size:1.02rem;color:var(--ink-2);margin:6px 0 18px">'
+          /* ★「A から B の C 件」と続けると入れ子に読めます。下の端が 1 のときは
+             B と C が同じ数になるので、なおさら意味が取れません。2 つの事実に分けます。 */
+          + "残っている範囲は <b>" + fmt(state.mLo) + "</b> 〜 <b>" + fmt(state.mHi)
+          + "</b>。件数は <b>" + fmt(state.mHi - state.mLo + 1) + "</b> 件です。</p>")
+    + '<div class="diagram-scroll">' + boxesSvg(total, left) + "</div></div>";
+
+  var result;
+  if (state.mStuck) {
+    result = '<div class="result"><div class="num">!</div><div>'
+      + '<div class="rh">' + state.mStuck + "</div>"
+      + '<div class="rt">機械は返事のとおりに範囲を狭めます。'
+      + "食い違うと、残る数がなくなります。</div></div></div>";
+  } else if (done) {
+    result = '<div class="result hit"><div class="num">' + n + "</div><div>"
+      + '<div class="rh">' + n + " 回で当たりました。</div>"
+      + '<div class="rt">この範囲なら、いちばん運が悪いときでも最大 ' + total
+      + " 回で終わります。</div></div></div>";
+  } else {
+    result = '<div class="result"><div class="num">' + (n + 1) + "</div><div>"
+      + '<div class="rh">その数は <b>' + fmt(g) + "</b> ですか。</div>"
+      + '<div class="rt">あと最大で ' + left + " 回聞けば当たります。</div></div></div>";
+  }
+
+  var ctrl = '<div class="panel-body"><div class="keypad">'
+    + '<button class="btn" data-reply="up"' + (done ? " disabled" : "") + ">もっと大きい</button>"
+    + '<button class="btn" data-reply="down"' + (done ? " disabled" : "") + ">もっと小さい</button>"
+    + '<button class="btn primary" data-reply="hit"' + (done ? " disabled" : "") + ">当たり</button>"
+    + '<button class="btn ghost" data-reply="reset">最初から</button></div>'
+    + '<div style="margin-top:16px">'
+    + logList(state.mLog, "機械が聞いた数がここに並びます") + "</div></div>";
+
+  var side = '<div class="side">'
+    + panel("mrange", "範囲を変える", r.what,
+        '<div class="panel-body"><div class="keypad">'
+        + RANGES.map(function (x) {
+            return '<button class="btn' + (x.k === state.mRange ? " primary" : " ghost")
+              + '" data-mrange="' + x.k + '" style="padding:9px 14px">'
+              + x.t + "</button>";
+          }).join("")
+        + "</div><p style=\"margin-top:12px;color:var(--ink-2)\">"
+        + "この範囲なら、いちばん運が悪いときでも最大 <b>" + total + "</b> 回です。"
+        + "広げてから、何回で当たるかを予想してください。</p></div>")
+    + panel("mhow", "機械がしていること", null,
+        '<div class="panel-body"><p>残っている範囲の下の端と上の端を、数で持っています。'
+        + "その 2 つの平均の整数部分を聞き、返事で片方の端を動かします。</p>"
+        + "<p>聞いた数は範囲から外します。だから範囲は必ず狭くなり、いつか終わります。</p></div>")
+    + "</div>";
+
+  return head("04", "機械に当てさせる",
+      "1 から " + r.t.split("〜")[1] + " までの整数を 1 つ、心の中で決めてください。"
+      + "機械が聞くので、3 つのボタンで答えます。")
+    + '<div class="grid-main">'
+    + panel("mlab", "機械の番", "最大 " + total + " 回", lab + result + ctrl)
+    + side + "</div>"
+    + rail("範囲を広げても、回数はあまり増えません")
+    + statRow(RANGES.map(function (x) {
+        return { v: askMax(x.hi), u: "回", l: x.t, n: x.what, hi: x.k === state.mRange };
+      }))
+    + '<div class="figrow">'
+    + fig("dictionary", { cap: "24 万語の辞書でも 18 回。件数が増えても、回数はゆっくりしか増えません。" })
+    + fig("binary-steps", { cap: "必要のなくなった数は灰色に落ちます。残りが 1 つになるまでくり返します。" })
+    + "</div>"
+    + quiz("q4",
+        { title: "四角の見方", body: "色のついた四角が 3 つ残っています。これは何を表していますか。" },
+        ["あと 3 回は必ず聞く", "あと最大で 3 回聞けば当たる", "残っている候補が 3 件"],
+        1,
+        "あと最大で何回聞けば当たるかです。運がよければ、その前に当たります。"
+        + "四角の数そのものは変わりません。変わるのは色のついた数です。");
+}
+
+
+/* ═════ ch5.js ═════ */
+/* ═════ 05 手順の条件 ═══════════════════════════════════════════════════
+   人に言えば通じる指示が、書かれたとおりにしか動かない相手には通じない。
+   そのあと、聞いた数を「外す」と「残す」を同じ場面で並べ、終わり方を見る。
+   ★ 数はすべて実測。正解 100 で 50,75,87,93,96,98,99 と進み、以後 99 を聞き続ける。
+     7 手目の範囲は 98〜100。99〜100 になるのは 8 手目から。 */
+
+var VAGUE = [
+  { a: "50 を聞きました。「もっと大きい」と返ってきました。",
+    b: "1 番で両端を決め、2 番で平均の整数部分の 50 を聞きます。", ng: false },
+  { a: "「また真ん中あたり」。<b>どの範囲の真ん中かが書かれていません。</b>ここで止まります。",
+    b: "「もっと大きい」なので、4 番で下の端を 51 にします。2 番に戻り、次に聞くのは 75 です。",
+    ng: true },
+  { a: "51 から 100 の真ん中と読めば 75、まだ 1 から 100 の真ん中と読めば 50 です。"
+     + "<b>読む人で変わります。</b>",
+    b: "「もっと小さい」なので、5 番で上の端を 74 にします。2 番に戻り、次に聞くのは 62 です。",
+    ng: true }
+];
+
+var STEPS6 = [
+  "下の端を 1、上の端を 100 とする。",
+  "下の端と上の端の平均の整数部分を聞く。",
+  "「当たり」と言われたら終わる。",
+  "「もっと大きい」なら、下の端をその数の 1 つ上にする。",
+  "「もっと小さい」なら、上の端をその数の 1 つ下にする。",
+  "2 番に戻る。"
+];
+
+function endTable(keep) {
+  var rows = planEnd(keep, 100, 10);
+  var h = "<table><thead><tr><th>手目</th><th>聞く前の範囲</th><th>聞く数</th>"
+    + "<th>聞いたあとの範囲</th></tr></thead><tbody>";
+  for (var i = 0; i < rows.length; i++) {
+    var r = rows[i];
+    var stuck = keep && i >= 7;
+    h += "<tr" + (r.hit ? ' class="on"' : "") + "><td>" + (i + 1) + "</td>"
+      + '<td class="num">' + r.lo + "〜" + r.hi + "</td>"
+      + '<td class="num"><b>' + r.g + "</b></td>"
+      + '<td class="num' + (stuck ? " stop" : "") + '">'
+      + (r.hit ? "当たり" : (r.after ? r.after[0] + "〜" + r.after[1] : "")) + "</td></tr>";
+  }
+  return h + "</tbody></table>";
+}
+
+function renderRules() {
+  var i = Math.min(state.vStep, VAGUE.length - 1);
+  var s = VAGUE[i];
+  var last = i >= VAGUE.length - 1;
+  var keep = state.endMode === "nokosu";
+
+  var left = '<div class="panel-body">'
+    + '<p style="font-weight:700;margin-bottom:10px">人に言う指示</p>'
+    + '<ol style="margin:0;padding-left:1.2em;color:var(--ink-2)">'
+    + "<li>真ん中あたりを聞く。</li><li>ちがったら、また真ん中あたりを聞く。</li>"
+    + "<li>当たるまでくり返す。</li></ol>"
+    + '<p style="margin-top:14px;padding:12px 14px;border-radius:9px;background:'
+    + (s.ng ? "var(--stop-soft)" : "var(--paper-2)") + ';color:'
+    + (s.ng ? "var(--stop)" : "var(--ink-2)")
+    + '">' + s.a + "</p></div>";
+
+  var right = '<div class="panel-body">'
+    + '<p style="font-weight:700;margin-bottom:10px">機械に渡す手順</p>'
+    + '<ol style="margin:0;padding-left:1.2em;color:var(--ink-2)">'
+    + STEPS6.map(function (t, k) {
+        var lit = k <= Math.min(5, 2 + i * 2);
+        return "<li" + (lit ? ' style="color:var(--ink);font-weight:600"' : "") + ">" + t + "</li>";
+      }).join("") + "</ol>"
+    + '<p style="margin-top:14px;padding:12px 14px;border-radius:9px;background:var(--main-soft);'
+    + 'color:var(--main-deep);font-weight:600">' + s.b + "</p></div>";
+
+  var ctrl = '<div class="stepbar">'
+    + '<button class="btn primary" data-run="vnext"'
+    + (last ? " disabled" : "") + ">進む</button>"
+    + '<button class="btn ghost" data-run="vreset">最初から</button>'
+    + '<span class="note">'
+    + (i + 1) + " 手目" + (last ? "（ここまで）" : "") + "</span></div>";
+
+  var endPanel = panel("endlab", "聞いた数を、範囲に残すとどうなるか", "正解 100 で追う",
+      '<div class="panel-body" style="border-bottom:1px solid var(--line-2)">'
+      + seg("emode", [{ v: "hazusu", t: "聞いた数を外す" }, { v: "nokosu", t: "聞いた数を残す" }],
+            state.endMode)
+      + '<p style="margin-top:12px;color:var(--ink-2)">'
+      + (keep
+          ? "下の端を「その数」にします。このまま進めて正解が 100 だと、"
+            + "残りが 99 と 100 の 2 件になったところで真ん中がいつも 99 になり、両端が動かなくなります。"
+          : "下の端を「その数の 1 つ上」にします。聞いた数はもう範囲にありません。"
+            + "範囲は必ず 1 件以上縮むので、くり返すといつか 1 件になります。")
+      + "</p></div>" + endTable(keep));
+
+  return head("05", "書かれたとおりにしか動かない相手に、どう渡すか",
+      "左は、人に言えば通じる指示です。進むを押してください。")
+    + '<div class="grid-main two">'
+    + panel("vleft", "あいまいな指示", "止まる", left)
+    + panel("vright", "両端を数で持つ手順", "決まる", right)
+    + "</div>" + ctrl
+    + '<div style="margin-top:22px">' + endPanel + "</div>"
+    + rail("あいまいな書き方と、終わりの書き忘れ")
+    + '<div class="figrow">'
+    + fig("def-algo", { cap: "レシピのあいまいさは、作る人が補って読みます。"
+        + "手順に残っていると、次の一手が読む人によって変わり、そこで止まります。" })
+    + fig("loop-forever", { cap: "本の例は、数を 1 つずつ減らす手順に、"
+        + "どこで終わるかを書き忘れた場合です。0 の次は −1、−2 と続き、止まりません。"
+        + "こちらは範囲が縮まなくなって、同じ数を聞き続けます。"
+        + "<b>止まらなくなり方は違いますが、どちらも終わりが決まっていません。</b>" })
+    + "</div>"
+    + quiz("q5",
+        { title: "止まらなくなる瞬間",
+          body: "聞いた数を残す書き方で、範囲が 99 から 100 の 2 件になりました。"
+              + "99 を聞いて「もっと大きい」と返ったら、次に聞くのはどれですか。" },
+        ["99", "100", "決まらない"], 0,
+        "下の端が 99 のままなので、両端の平均の整数部分もまた 99 です。"
+        + "同じ数を聞き続けることになり、終わりません。"
+        + "外す書き方なら下の端が 100 になり、範囲は 100 だけになって次で終わります。")
+    + "<details><summary>手順として書くときの約束</summary><div class=\"dbody\">"
+    + "<ol style=\"margin:0;padding-left:1.2em\">"
+    + "<li>いま調べている範囲を、下の端と上の端の 2 つの数で書く。</li>"
+    + "<li>次に聞く数を、その 2 つから計算で決める。</li>"
+    + "<li>返事ごとに、どちらの端をいくつにするかを書く。</li>"
+    + "<li>どうなったら終わりかを書く。</li></ol>"
+    + '<div style="margin:14px auto 0;max-width:980px">'
+    + fig("base-case", { cap: "4 番目にあたるところです。"
+        + "これを書かないと、手順は終わりに行き着きません。" })
+    + "</div>"
+    + "<p style=\"margin-top:12px\">読む人が迷ったら、そこが足りないところです。"
+    + "書き足して、もう一度渡してください。</p></div></details>";
+}
+
+
+/* ═════ ui.js ═════ */
+/* ============================================================================
+   共通の部品 — 器・見出し・パネル・切り替え・表・記録・理解の確認
+   ★ 文字列を返すだけにします。DOM は core.js の差分更新が当てます。
+   ============================================================================ */
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, function (c) {
+    return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c];
+  });
+}
+
+var CHAPTERS = [
+  { no: "01", t: "アルゴリズムとは" },
+  { no: "02", t: "数当てをやってみる" },
+  { no: "03", t: "2 つの聞き方" },
+  { no: "04", t: "機械に当てさせる" },
+  { no: "05", t: "手順の条件" }
+];
+
+function chapters() {
+  return '<nav class="chapters" aria-label="章">' + CHAPTERS.map(function (c, i) {
+    return '<button class="chapter" data-page="' + i + '"'
+      + (state.page === i ? ' aria-current="page"' : "")
+      + '><span class="num">' + c.no + '</span><span>' + c.t + '</span></button>';
+  }).join("") + "</nav>";
+}
+
+function topbar() {
+  return '<div class="topbar"><div class="wrap" style="display:flex;align-items:center;'
+    + 'justify-content:space-between;width:100%">'
+    + '<div class="brand"><span class="brand-icon">'
+    + '<svg viewBox="0 0 24 24" fill="none" stroke="#a99bd6" stroke-width="2.2" stroke-linecap="round">'
+    + '<path d="M4 7h7M4 12h4M4 17h9"/><circle cx="17" cy="9" r="3"/><path d="M19.2 11.2 L21.5 14"/></svg>'
+    + '</span><span>小船講義<span class="course" style="margin-left:10px">'
+    + 'ALGORITHMS &amp; DATA STRUCTURES</span></span></div>'
+    + '<div class="header-actions"><button id="bigtoggle" class="plain" aria-pressed="'
+    + (state.big ? "true" : "false") + '">文字を拡大</button></div>'
+    + "</div></div>";
+}
+
+function intro() {
+  return '<section class="hero"><div class="herogrid">'
+    + "<div>"
+    + '<div class="kicker">LESSON 01 ／ アルゴリズムとデータ構造</div>'
+    + "<h1>聞き方で、回数が変わる</h1>"
+    + '<p class="lead">1 から 100 までの整数を当てるのに、最大 100 回かかる聞き方と、'
+    + "最大 7 回で済む聞き方があります。同じ問題でも、手順を決めておくと手間の桁が変わります。</p>"
+    + "</div>"
+    + '<div class="herocard"><strong>この回でやること</strong>'
+    + "<p>自分で当てて回数を数え、2 つの聞き方を 1 手ずつ比べ、機械に当てさせ、"
+    + "最後に、手順として書けているかを確かめます。</p></div>"
+    + "</div></section>";
+}
+
+function head(no, title, desc, right) {
+  return '<div class="section-head"><div>'
+    + '<div class="section-no">LESSON ' + no + "</div>"
+    + "<h2>" + title + "</h2>"
+    + (desc ? "<p>" + desc + "</p>" : "")
+    + "</div>" + (right || "") + "</div>";
+}
+
+function seg(name, items, current) {
+  return '<div class="segmented" data-seg="' + name + '" role="group">'
+    + items.map(function (it) {
+      return '<button data-' + name + '="' + it.v + '" aria-pressed="'
+        + (current === it.v ? "true" : "false") + '">' + it.t + "</button>";
+    }).join("") + "</div>";
+}
+
+function panel(id, title, meta, body, foot) {
+  return '<section class="panel" id="' + id + '">'
+    + '<div class="panel-top"><h3>' + title + "</h3>"
+    + (meta ? '<span class="meta">' + meta + "</span>" : "")
+    + "</div>" + body + (foot || "") + "</section>";
+}
+
+/* 理解の確認。★ 押した肢に印を残し、1 回目で答えを出さない章もある。 */
+function quiz(id, q, opts, ans, why, tag) {
+  var picked = state.answers[id];
+  var done = state.checked[id];
+  return '<div class="quiz" data-quiz="' + id + '">'
+    + '<span class="qtag">' + (tag || "理解の確認") + "</span>"
+    + '<h3>' + q.title + "</h3>"
+    + '<p class="qq">' + q.body + "</p>"
+    + '<div class="qopts">' + opts.map(function (o, i) {
+      var cls = "qopt";
+      if (done) cls += (i === ans ? " ok" : " ng");
+      if (picked === i) cls += " chosen";
+      return '<button class="' + cls + '" data-qopt="' + id + ":" + i + '">' + o + "</button>";
+    }).join("") + "</div>"
+    + (done
+      ? '<p class="qhead ' + (picked === ans ? "ok" : "ng") + '">'
+        + (picked === ans ? "正解です。" : "ちがいます。") + "</p>"
+      : "")
+    + '<p class="qwhy' + (done ? " on" : "") + '">' + why + "</p>"
+    + "</div>";
+}
+
+/* 記録の並び。多いときは後ろの 12 回ぶんだけ出す。 */
+function logList(rows, empty) {
+  if (!rows.length) return '<ul class="log"><li class="none">' + empty + "</li></ul>";
+  var from = Math.max(0, rows.length - 12);
+  var h = from > 0 ? '<li class="none">… はじめの ' + from + " 回ぶん</li>" : "";
+  for (var i = from; i < rows.length; i++) {
+    var r = rows[i];
+    /* ★ 桁区切りを付けます。第4章では 4150000000 のような 10 桁が出ますが、
+       同じ画面の結果の帯は fmt() で 4,150,000,001 と出していました。
+       同じ量を出す場所で書き方が違うと、同じ数だと読み取れません。 */
+    h += "<li" + (r.hit ? ' class="hit"' : "") + "><b>" + fmt(r.g) + "</b>"
+      + (r.hit ? "当たり" : (r.reply === "up" ? "もっと大きい" : "もっと小さい")) + "</li>";
+  }
+  return '<ul class="log">' + h + "</ul>";
+}
+
+function pager() {
+  var prev = state.page > 0 ? CHAPTERS[state.page - 1] : null;
+  var next = state.page < CHAPTERS.length - 1 ? CHAPTERS[state.page + 1] : null;
+  return '<div class="pager">'
+    + (prev ? '<button class="btn ghost" data-page="' + (state.page - 1) + '">← ' + prev.no + " " + prev.t + "</button>" : "<span></span>")
+    + (next ? '<button class="btn" data-page="' + (state.page + 1) + '">' + next.no + " " + next.t + " →</button>" : "<span></span>")
+    + "</div>";
+}
+
+function foot() {
+  return '<div class="foot"><span>アルゴリズムとデータ構造 ／ 第 1 回</span>'
+    + "<span>平成国際大学 情報デザイン学部</span></div>";
+}
+
+var PAGES = [renderWhat, renderTry, renderTwoWays, renderMachine, renderRules];
+
+function shell() {
+  return topbar()
+    + '<div class="wrap">' + intro() + chapters()
+    + '<main id="main">' + PAGES[state.page]() + pager() + "</main>"
+    + foot() + "</div>";
+}
+
+/* ── 範囲の帯 ────────────────────────────────────────────────────────────
+   1〜100 を横一本で見せる。残っている範囲だけを主軸色で塗り、捨てた側は
+   灰色の破線で「見なくてよくなった」と分かる形にする。
+   ★ 「捨てた」と「まだ見ていない」を同じ描き方にしない（線種とラベルを併用）。 */
+function bandSvg(lo, hi, guess, hit, opt) {
+  opt = opt || {};
+  var W = 640, H = 128, x0 = 34, x1 = W - 34, span = x1 - x0;
+  function px(v) { return x0 + (v - 1) / 99 * span; }
+  var a = px(lo), b = px(hi + 1 > 100 ? 100 : hi) + (hi === lo ? 4 : 0);
+  var fill = hit ? "var(--hit)" : "var(--main)";
+  var soft = hit ? "var(--hit-soft)" : "var(--main-soft)";
+  var h = '<svg viewBox="0 0 ' + W + " " + H + '" width="100%" height="' + H + '" '
+    + 'role="img" aria-label="1 から 100 のうち、残っている範囲は ' + lo + " から " + hi
+    + ' です">';
+  /* 捨てた側 */
+  if (a > x0) h += '<rect x="' + x0 + '" y="46" width="' + (a - x0) + '" height="40" rx="9" '
+    + 'fill="none" stroke="var(--drop)" stroke-width="1.8" stroke-dasharray="7 6"/>';
+  if (b < x1) h += '<rect x="' + b + '" y="46" width="' + (x1 - b) + '" height="40" rx="9" '
+    + 'fill="none" stroke="var(--drop)" stroke-width="1.8" stroke-dasharray="7 6"/>';
+  /* 残っている範囲 */
+  /* 残りが 1 件のときの幅。5px だと、帯が 40px 高いぶん緑の棒に見えます。 */
+  h += '<rect x="' + a + '" y="46" width="' + Math.max(8, b - a) + '" height="40" rx="9" '
+    + 'fill="' + soft + '" stroke="' + fill + '" stroke-width="2.6"/>';
+  /* いま聞いた数 */
+  if (guess) {
+    var g = px(guess);
+    h += '<line x1="' + g + '" y1="34" x2="' + g + '" y2="94" stroke="var(--ask)" stroke-width="2.8"/>'
+      + '<rect x="' + (g - 28) + '" y="2" width="56" height="30" rx="9" fill="var(--ask)"/>'
+      + '<text x="' + g + '" y="24" text-anchor="middle" font-size="18" font-weight="800" '
+      + 'fill="#fff">' + guess + "</text>";
+  }
+  h += '<text text-anchor="start" x="' + x0 + '" y="116" font-size="17" fill="var(--ink-4)">1</text>'
+    + '<text text-anchor="end" x="' + x1 + '" y="116" font-size="17" fill="var(--ink-4)">100</text>';
+  if (opt.label) h += '<text text-anchor="middle" x="' + (W / 2) + '" y="116" font-size="17" '
+    + 'font-weight="700" fill="var(--ink-3)">' + opt.label + "</text>";
+  return h + "</svg>";
+}
+
+/* 四角を並べて「あと最大で何回」を見せる */
+/* ★ 四角の数は範囲で変わります（1〜100 で 7 個、83 億で 33 個）。
+   数のぶん横に伸ばすと viewBox 640 を越え、**両端が黙って切られます**
+   （2026-09-21 に 33 個で 237px ずつ切れていました）。
+   だから数が増えたら四角のほうを縮め、並び全体を器の中に収めます。
+   四角の数は減らしません。減らすと「あと何回聞けるか」が画面から消えます。 */
+function boxesSvg(total, left) {
+  var W = 640, IN = 600, n = total;
+  var s = 30, gap = 9;
+  var k = Math.min(1, IN / (n * s + (n - 1) * gap));
+  s *= k; gap *= k;
+  var w = n * s + (n - 1) * gap, x0 = (W - w) / 2, y0 = 14 + (30 - s) / 2;
+  var h = '<svg viewBox="0 0 ' + W + ' 86" width="100%" height="86" role="img" '
+    + 'aria-label="あと最大 ' + left + " 回。四角 " + n + ' 個のうち、色のついたものが残りの回数です">';
+  for (var i = 0; i < n; i++) {
+    var on = i < left;
+    h += '<rect x="' + (x0 + i * (s + gap)).toFixed(1) + '" y="' + y0.toFixed(1)
+      + '" width="' + s.toFixed(1) + '" height="' + s.toFixed(1)
+      + '" rx="' + (8 * k).toFixed(1) + '" fill="' + (on ? "var(--main-soft)" : "#fff") + '" stroke="'
+      + (on ? "var(--main)" : "var(--line)") + '" stroke-width="' + (on ? 2.4 : 1.4) + '"/>';
+  }
+  h += '<text text-anchor="middle" x="' + (W / 2) + '" y="78" font-size="17" font-weight="700" '
+    + 'fill="var(--ink-3)">色のついた四角の数が、あと最大で何回聞けば当たるか</text>';
+  return h + "</svg>";
+}
+
+/* ── 誌面からの図 ────────────────────────────────────────────────────────
+   ★ すべて版元の誌面です。**出典を必ず添えます。**
+   ★ 公開版（FIGS_PUBLIC）では中身が空になるので、出典だけの箱にします。 */
+function fig(name, opt) {
+  opt = opt || {};
+  var f = FIGS[name];
+  if (!f) return "";
+  var cap = opt.cap || f.cap;
+  if (!f.src) {
+    return '<figure class="bookfig empty" data-fig="' + name + '"><div class="bfbox">'
+      + '<p class="bfnote">この図は教室で配る版にだけ入っています。</p></div>'
+      + "<figcaption>" + cap + '<cite>' + f.cite + "</cite></figcaption></figure>";
+  }
+  /* ★ 画像は .diagram-scroll で包みます。狭い画面で縮めると誌面の中の字が
+       読めなくなるので、幅の下限（--fig-min）を持たせ、足りないぶんは横に送ります。
+       横に動いてよいのは .diagram-scroll の中だけ、という決めをここでも使います。 */
+  return '<figure class="bookfig' + (opt.wide ? " wide" : "") + '">'
+    + '<div class="diagram-scroll">'
+    /* data-fig は検査のための名札です。画像は data URI で入るので、
+       ファイル名では元の誌面と突き合わせられません（qa_drive.py の type が使います）。 */
+    + '<img data-fig="' + name + '" src="' + f.src + '" width="' + f.w + '" height="' + f.h
+    + '" alt="' + esc(cap) + '" loading="lazy">'
+    + "</div><figcaption>" + cap + "<cite>" + f.cite + "</cite></figcaption></figure>";
+}
+
+/* 数字を大きく見せる札。ポンチ絵の代わりに、数そのものを主役にする */
+function statRow(items) {
+  return '<div class="stats">' + items.map(function (s) {
+    return '<div class="stat' + (s.hi ? " hi" : "") + '">'
+      + '<div class="sv">' + s.v + (s.u ? '<span class="su">' + s.u + "</span>" : "") + "</div>"
+      + '<div class="sl">' + s.l + "</div>"
+      + (s.n ? '<div class="sn">' + s.n + "</div>" : "") + "</div>";
+  }).join("") + "</div>";
+}
+
+/* 見出しの上に置く、細い帯（章の色分け） */
+function rail(text) {
+  return '<div class="rail"><span></span>' + text + "</div>";
+}
+
+
+/* ═════ boot.js ═════ */
+/* ═════ 押したとき・打ったとき ═════════════════════════════════════════
+   ★ 分岐はここ 1 か所にまとめます。章ごとに listener を足すと、
+     どこで何が起きるかが追えなくなります。 */
+
+function handleClick(d, e) {
+  /* 01 場面の切り替え */
+  if (d.scene !== undefined) { act(function () { state.scene = d.scene; }, e); return true; }
+
+  /* 理解の確認。押した肢に印が残る */
+  if (d.qopt !== undefined) {
+    var a = d.qopt.split(":");
+    act(function () { state.answers[a[0]] = +a[1]; state.checked[a[0]] = true; }, e);
+    return true;
+  }
+
+  /* 02 自分で当てる */
+  if (d.run === "try") {
+    act(function () { tryAsk(parseInt(state.tryInput, 10)); }, e);
+    return true;
+  }
+  if (d.run === "tryreset") { act(tryStart, e); return true; }
+
+  /* 03 2 つの聞き方 */
+  if (d.way !== undefined) {
+    act(function () { state.way = d.way; state.step = -1; }, e);
+    return true;
+  }
+  if (d.step !== undefined) {
+    act(function () {
+      var rows = plan(state.way, TARGET);
+      if (d.step === "next") state.step = Math.min(rows.length - 1, state.step + 1);
+      else if (d.step === "end") state.step = rows.length - 1;
+      else state.step = -1;
+    }, e);
+    return true;
+  }
+  if (d.scale !== undefined) {
+    act(function () {
+      state.opened = state.opened || {};
+      state.opened[d.scale] = true;
+    }, e);
+    return true;
+  }
+
+  /* 04 機械に当てさせる */
+  if (d.mrange !== undefined) {
+    act(function () { state.mRange = d.mrange; mReset(); }, e);
+    return true;
+  }
+  if (d.reply !== undefined) {
+    act(function () { d.reply === "reset" ? mReset() : mReply(d.reply); }, e);
+    return true;
+  }
+
+  /* 05 手順の条件 */
+  if (d.run === "vnext") {
+    act(function () { state.vStep = Math.min(VAGUE.length - 1, state.vStep + 1); }, e);
+    return true;
+  }
+  if (d.run === "vreset") { act(function () { state.vStep = 0; }, e); return true; }
+  if (d.emode !== undefined) { act(function () { state.endMode = d.emode; }, e); return true; }
+
+  return false;
+}
+
+function handleInput(d, t) {
+  if (d.field === undefined) return;
+  /* ★ render を呼ばない。打っている途中で差分を当てると、変換中の文字が消えます。
+     値は state に控えるだけにし、押したときに使います。 */
+  state[d.field] = t.value;
+}
+
+bind();
+render();
+</script></body></html>
