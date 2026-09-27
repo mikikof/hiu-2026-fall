@@ -18,24 +18,26 @@ ul.lecs li{display:grid;grid-template-columns:72px minmax(0,1fr);align-items:cen
 .acts{grid-column:2;display:flex;flex-wrap:wrap;gap:8px}
 .btn{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:7px 14px;border-radius:9px;font-weight:700;font-size:15px;text-decoration:none;border:1.5px solid var(--ct);color:var(--ct);background:transparent;white-space:nowrap}
 .btn.pri{background:var(--c);border-color:var(--c);color:#fff}
+ul.lecs li.locked .ttl{color:var(--sub);font-weight:600}
+ul.lecs li.locked .no{color:var(--sub)}
+.soon{grid-column:2;color:var(--sub);font-size:14px}
 section.subj{--ct:var(--c)}
 @media (prefers-color-scheme:dark){section.subj{--ct:color-mix(in srgb,var(--c) 55%,#fff)}}
 .btn:focus-visible{outline:3px solid var(--c);outline-offset:2px}
 @media (hover:hover){.btn:hover{filter:brightness(1.08)}}
 .back{display:inline-block;margin-bottom:14px;font-size:15px;color:var(--sub)}
-@media (max-width:560px){header h1{font-size:24px}ul.lecs li{grid-template-columns:minmax(0,1fr);padding:14px}.no{justify-self:start}.acts{grid-column:1}}</style></head><body><div class="wrap"><header><h1>授業資料（2026年度 後期）</h1><p>平成国際大学 情報デザイン学部　小船 幹生</p></header>
+@media (max-width:560px){header h1{font-size:24px}ul.lecs li{grid-template-columns:minmax(0,1fr);padding:14px}.no{justify-self:start}.acts,.soon{grid-column:1}}</style></head><body><div class="wrap"><header><h1>授業資料（2026年度 後期）</h1><p>平成国際大学 情報デザイン学部　小船 幹生</p></header>
 <section class="subj" id="programming" style="--c:#2563eb">
 <div class="head"><h2><a href="programming/">プログラミング入門</a></h2><p class="lead">スライドと演習ノートです。演習ノートは Google Colab で開きます。書き込んだ内容を残すときは、Colab の「ドライブにコピー」を押してから使います。</p></div>
 <ul class="lecs">
 <li><span class="no">第1回</span><span class="ttl">はじめてのプログラム</span><span class="acts"><a class="btn pri" href="programming/01-first-program.html">開く</a><a class="btn" href="https://colab.research.google.com/github/mikikof/hiu-2026-fall/blob/main/programming/01-first-program_%E6%BC%94%E7%BF%92.ipynb" target="_blank" rel="noopener">演習ノートを Colab で開く</a><a class="btn" href="programming/01-first-program_演習.ipynb" download>演習ノートをダウンロード</a></span></li>
-<li><span class="no">第2回</span><span class="ttl">アルゴリズムと言語</span><span class="acts"><a class="btn pri" href="programming/02-algorithm-and-language.html">開く</a><a class="btn" href="https://colab.research.google.com/github/mikikof/hiu-2026-fall/blob/main/programming/02-algorithm-and-language_%E6%BC%94%E7%BF%92.ipynb" target="_blank" rel="noopener">演習ノートを Colab で開く</a><a class="btn" href="programming/02-algorithm-and-language_演習.ipynb" download>演習ノートをダウンロード</a></span></li>
-<li><span class="no">第3回</span><span class="ttl">Python を動かす場所</span><span class="acts"><a class="btn pri" href="programming/03-where-python-runs.html">開く</a><a class="btn" href="https://colab.research.google.com/github/mikikof/hiu-2026-fall/blob/main/programming/03-where-python-runs_%E6%BC%94%E7%BF%92.ipynb" target="_blank" rel="noopener">演習ノートを Colab で開く</a><a class="btn" href="programming/03-where-python-runs_演習.ipynb" download>演習ノートをダウンロード</a></span></li>
+<li class="locked"><span class="no">第2回</span><span class="ttl">アルゴリズムと言語</span><span class="soon">10/4（日）から公開</span></li>
+<li class="locked"><span class="no">第3回</span><span class="ttl">Python を動かす場所</span><span class="soon">10/11（日）から公開</span></li>
 </ul></section>
 <section class="subj" id="algorithm" style="--c:#7c3aed">
-<div class="head"><h2><a href="algorithm/">アルゴリズムとデータ構造</a></h2><p class="lead">回ごとの教材です。スマートフォンで解く演習は、下の「演習アプリ」から開きます。</p></div>
+<div class="head"><h2><a href="algorithm/">アルゴリズムとデータ構造</a></h2><p class="lead">回ごとの教材です。</p></div>
 <ul class="lecs">
-<li><span class="no">第1回</span><span class="ttl">聞き方で、回数が変わる</span><span class="acts"><a class="btn pri" href="algorithm/01-guess-the-number.html">開く</a></span></li>
-<li><span class="no">演習</span><span class="ttl">演習アプリ（スマートフォン向け）</span><span class="acts"><a class="btn pri" href="https://mikikof.github.io/algo-2026/" target="_blank" rel="noopener">開く</a></span></li>
+<li><span class="no">第1回</span><span class="ttl">1〜100 を 7 回で当てる</span><span class="acts"><a class="btn pri" href="algorithm/01-guess-the-number.html">開く</a></span></li>
 </ul></section>
 <section class="subj" id="literacy" style="--c:#0f766e">
 <div class="head"><h2><a href="literacy/">PCリテラシ</a></h2><p class="lead">Windows 11 と Mac を切り替えて見られる教材です。</p></div>

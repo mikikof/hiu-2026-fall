@@ -10,4 +10,4 @@
 | アルゴリズムとデータ構造 | https://mikikof.github.io/hiu-2026-fall/algorithm/ |
 | PCリテラシ | https://mikikof.github.io/hiu-2026-fall/literacy/ |
 
-各回の教材はブラウザで開いて見ます。ダウンロードできるのは演習ノートだけです。
+各回の教材は、その週に入るとブラウザで開けるようになります。ダウンロードできるのは演習ノートだけです。
