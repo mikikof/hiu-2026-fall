@@ -9,6 +9,7 @@
 | プログラミング入門 | https://mikikof.github.io/hiu-2026-fall/programming/ |
 | アルゴリズムとデータ構造 | https://mikikof.github.io/hiu-2026-fall/algorithm/ |
 | PCリテラシ | https://mikikof.github.io/hiu-2026-fall/literacy/ |
+| PCリテラシ 基本操作つき（中学 1 年生向け） | https://mikikof.github.io/hiu-2026-fall/kiso/ |
 | 情報数理 基礎Ⅰ演習 | https://mikikof.github.io/hiu-2026-fall/suuri/ |
 
 各回の教材は、その週に入るとブラウザで開けるようになります。ダウンロードできるのは演習ノートだけです。
