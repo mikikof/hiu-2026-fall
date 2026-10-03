@@ -887,7 +887,7 @@ kbd{display:inline-block;padding:1px 6px;border:1px solid var(--line);border-bot
 .seqfig{padding:16px 20px}
 
 /* ═══════════ 13 Colab のセルを実際に走らせる（模擬） ═══════════
-   ここは「見せる」だけの絵にしない。押すと [ ] → [*] → [1] と変わり、出力が下から出る。
+   ここは「見せる」だけの絵にしない。押すと [ ] → 停止の印 → [1] と変わり、出力が下から出る。
    実機でやることと同じ形にしておくと、初回に自分の画面で迷わない。 */
 .nbrun{display:flex;align-items:center;gap:10px;margin:2px 0 6px}
 .nbrun .nbhint{font-size:13.5px;font-weight:700;color:var(--ink-4)}
@@ -1096,6 +1096,9 @@ kbd{display:inline-block;padding:1px 6px;border:1px solid var(--line);border-bot
 .qzcode{min-height:380px}
 .qzcode pre{padding:14px 22px;line-height:1.75}
 .qzterm .tl.ng{font-size:14px;line-height:1.7}
+
+/* p16 の模擬: 出力の札（出力・エラー）と中身のあいだが空かずに「出力Hello, World」と続いていた */
+.nbcell .nbout .nbio{margin-right:8px}
 /* ═══════════ 補足モーダル（3科目で共有）═══════════
    凍結ベースの器は「見出し＋文」だけを並べる作りで、本文 14px・器 780px だった。
    1年生は読まない。図・動き・大きい字を受け取れる器に替える。
@@ -2065,7 +2068,7 @@ body{word-break:keep-all}
 <span class="cl" data-c="1">          ^</span>
 <span class="cl" data-c="2">SyntaxError</span><span class="cl" data-c="3">: unterminated string literal (detected at line 1)</span></pre></div>
       <div class="cluelist">
-        <button class="cluebtn on" data-c="0"><b>1</b>どの​ファイルの​何行目か</button>
+        <button class="cluebtn on" data-c="0"><b>1</b>何行目か</button>
         <button class="cluebtn" data-c="1"><b>2​</b>その​行の​どこでつまずいたか</button>
         <button class="cluebtn" data-c="2"><b>3</b>エラーの​種類</button>
         <button class="cluebtn" data-c="3"><b>4</b>何がまずいのか</button>
@@ -3298,8 +3301,8 @@ function initLangs(){
 
 /* ═══════════ 20 エラーの4つの​手がかり ═══════════ */
 const CLUES=[
- '<b>どの​ファイルの​何行目か。</b>Colab は、​セルの​中身に一時的な​ファイルの​名前を付けて​動かしています。1行目に出るのは​その​名前で、​数字は​セルごとに違います。​名前は​気にせず、<b>line</b> のうしろの​行番号を見て、​コードの​その​行へ戻ります。',
- '<b>その​行の​どこでつまずいたか。</b>問題の​行がそのまま​表示され、​記号 <b>^</b> が位置を指します。​指す​場所は​原因そのものとは​限らず、​少し​後ろになることがあります。​日本語が前にある​行では、​本当の​場所より​左に出ます。',
+ '<b>何行目か。</b>Colab は、​セルの​中身に一時的な​ファイルの​名前を付けて​動かしています。1行目に出るのは​その​名前で、​数字は​セルごとに違います。​名前は​気にせず、<b>line</b> のうしろの​行番号を見て、​コードの​その​行へ戻ります。',
+ '<b>その​行の​どこでつまずいたか。</b>問題の​行がそのまま​表示され、​記号 <b>^</b> が位置を指します。​指す​場所は、​直す場所​そのものとは​限りません。​この​例では、​閉じていない​文字列の​始まりを指しています。​日本語が前にある​行では、​本当の​場所より​左に出ます。',
  '<b>エラーの​種類。</b>ここでは <b>SyntaxError</b>。文法の​誤りという​意味です。​種類が分かれば、​直し方の​見当がつきます。',
  '<b>何がまずいのか。</b>ここが具体的な​説明です。​英語ですが、​単語を1つずつ​引けば​読めます。​検索する​ときも、​この​部分を使います。'
 ];
@@ -3323,7 +3326,7 @@ const ERRKIND={
       note:'<b>実行する前</b>に止まります。​文法の​誤りなので、Python はプログラムを1行も​動かしません。<br><br>直す​場所は、​たいてい <b>^</b> の近くです。​カッコ・引用符の​閉じ忘れ、​全角の​記号がここに入ります。'},
  exc:{name:'例外',en:'Exception',
       code:"print('1つめ')\nprint(10 / 0)\n\n1つめ\nZeroDivisionError                Traceback (most recent call last)\n/tmp/ipykernel_…/….py in <cell line: 0>()\n      1 print('1つめ')\n----> 2 print(10 / 0)\n\nZeroDivisionError: division by zero",
-      note:'<b>実行してから</b>止まります。​文法は​正しいので、​途中まで動きます。​上の​例では <b>1つめ</b> が出てから​止まりました。<br><br>止まった​行は、​矢印 <b>----&gt;</b> が指しています。​その上の <b>cell line: 0</b> の 0 は、​行番号では​ありません。<br><br>0 で割る、​無い​名前を呼ぶ、といった​「動かしてみて​初めて​分かる」​誤りがこちらです。'}
+      note:'<b>実行してから</b>止まります。​文法は​正しいので、​途中まで動きます。​左の​例では <b>1つめ</b> が出てから​止まりました。<br><br>止まった​行は、​矢印 <b>----&gt;</b> が指しています。​前後の​行も​映りますが、​それは​出力ではなく​コードです。​その上の <b>cell line: 0</b> の 0 は、​行番号では​ありません。<br><br>0 で割る、​無い​名前を呼ぶ、といった​「動かしてみて​初めて​分かる」​誤りがこちらです。'}
 };
 function initErrKinds(){
   const seg=document.getElementById('errSeg');if(!seg)return;
