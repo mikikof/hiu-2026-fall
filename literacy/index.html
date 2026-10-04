@@ -26,7 +26,15 @@ section.subj{--ct:var(--c)}
 .btn:focus-visible{outline:3px solid var(--c);outline-offset:2px}
 @media (hover:hover){.btn:hover{filter:brightness(1.08)}}
 .back{display:inline-block;margin-bottom:14px;font-size:15px;color:var(--sub)}
-@media (max-width:560px){header h1{font-size:24px}ul.lecs li{grid-template-columns:minmax(0,1fr);padding:14px}.no{justify-self:start}.acts,.soon{grid-column:1}}</style></head><body><div class="wrap"><a class="back" href="../">← 授業資料の一覧</a><header><h1>PCリテラシ｜授業資料（2026年度 後期）</h1><p>平成国際大学 情報デザイン学部　小船 幹生</p></header>
+ul.lecs li.multi{align-items:start}
+ul.lecs li.multi>.no{margin-top:10px}
+.parts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.part{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:10px 12px 12px;border:1px solid var(--line);border-radius:10px}
+.plabel{font-weight:800;font-size:14px;line-height:1.6;letter-spacing:.08em;color:var(--ct);border:1.5px solid var(--ct);border-radius:6px;padding:0 9px}
+.part .acts{margin-top:auto;padding-top:2px}
+.part .btn{white-space:normal}
+.part.locked .ttl{color:var(--sub);font-weight:600}
+@media (max-width:560px){header h1{font-size:24px}ul.lecs li{grid-template-columns:minmax(0,1fr);padding:14px}.no{justify-self:start}.acts,.soon{grid-column:1}ul.lecs li.multi>.no{margin-top:0}}</style></head><body><div class="wrap"><a class="back" href="../">← 授業資料の一覧</a><header><h1>PCリテラシ｜授業資料（2026年度 後期）</h1><p>平成国際大学 情報デザイン学部　小船 幹生</p></header>
 <section class="subj" id="literacy" style="--c:#0f766e">
 <div class="head"><h2>PCリテラシ</h2><p class="lead">Windows 11 と Mac を切り替えて見られる教材です。</p></div>
 <ul class="lecs">
