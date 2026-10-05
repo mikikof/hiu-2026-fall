@@ -1099,6 +1099,66 @@ kbd{display:inline-block;padding:1px 6px;border:1px solid var(--line);border-bot
 
 /* p16 の模擬: 出力の札（出力・エラー）と中身のあいだが空かずに「出力Hello, World」と続いていた */
 .nbcell .nbout .nbio{margin-right:8px}
+
+/* ===== 補足 printflow（文字が画面に出るまで）の部品 =====
+   共有エンジン（_orchestrator/supp/）に無い名前だけを、sx を付けて足す。エンジンの名前（sxbox・sxflow・sxarrow・sxterm・sxnote）は
+   ここで定義し直さない（qa_supp の S6 が数える。セレクタに書くだけでも鳴るので、寸法を変えたい箱と矢印には別名の sxzb・sxar・sxcell を重ねて付ける）。押して切り替わるところは、エンジンの属性（data-when・data-lit・data-gone）だけで動かす。
+   ・sxmap / sxzone / sxwire … どこで起きているか（Google のコンピュータ → ネット → 手元の PC）
+   ・sxstage / sxrow / sxgrp / sxtiles / sxtile / sxtray / sxdots … いま流れているものの形（1文字を1枚の札で見せる）
+   ★ sxstage の高さは、いちばん背の高い段（5 段目）に合わせて固定する。段を切り替えるたびに下の「ひと言」が上下すると、投影で目が追えない。
+   ★ 縦は詰めてある。1280×720 の全画面で、ボタンから「ひと言」までが送らずに見える高さ（それより低い窓では、補足の中を少し送る）。
+   ★ スマホの幅（600px 未満）では横にはみ出す。共有エンジンの箱の並び（sxflow）が折り返さない作りで、ほかの補足も同じ（2026-10-05 に測った）。 */
+.sxmap{display:grid;grid-template-columns:minmax(0,3.1fr) auto minmax(0,1fr);align-items:stretch}
+.sxzone{min-width:0;border:2px dashed var(--ink-5,#B8BCC6);border-radius:16px;padding:6px 10px 9px;background:rgba(255,255,255,.62)}
+.sxzone .zh{font-size:clamp(12.5px,1vw,18px);font-weight:800;color:var(--ink-4,#6B7283);margin-bottom:5px}
+.sxzone .sxzb{padding:8px 8px}
+.sxzone .sxar{width:30px}
+.sxwire{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:clamp(66px,6.6vw,108px);
+  padding:0 6px;color:var(--ink-5,#B8BCC6);transition:color .3s}
+.sxwire .wl{font-size:clamp(12.5px,1vw,18px);font-weight:800;color:var(--ink-4,#6B7283);transition:color .3s}
+.sxwire svg{width:100%;max-width:92px;height:22px;fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.sxwire.lit,.sxwire.lit .wl{color:var(--blue-deep,#4566B3)}
+
+.sxstage{margin-top:11px;border:1px solid var(--line,#E5E1D6);border-radius:16px;background:#fff;padding:12px 18px;
+  min-height:clamp(144px,11.95vw,200px);display:flex;align-items:center;justify-content:center;box-sizing:border-box}
+.sxstage > [data-when]{width:100%}
+.sxrow{display:flex;align-items:flex-start;justify-content:center;gap:clamp(8px,1.2vw,20px);flex-wrap:wrap}
+.sxrow > .sxar{height:clamp(50px,4.4vw,72px)}
+.sxrow.ctr{align-items:center}
+.sxrow.ctr > .sxar{height:auto}
+.sxgrp{display:flex;flex-direction:column;align-items:center;gap:7px;min-width:0}
+.sxgrp .gc{font-size:clamp(13.5px,1.08vw,19px);font-weight:800;line-height:1.45;text-align:center;color:var(--ink-3,#474D5C)}
+.sxgrp .gc.b{color:var(--blue-deep,#4566B3)}
+.sxgrp .gc.g{color:#3C6A50}
+.sxgrp .gc.a{color:#7A6332}
+.sxgrp .gc.n{font-weight:500;color:var(--ink-3,#474D5C)}
+.sxtiles{display:flex;align-items:flex-start;justify-content:center;gap:clamp(4px,.5vw,8px)}
+.sxtiles.wide{gap:clamp(12px,1.3vw,20px)}
+.sxtile{display:flex;flex-direction:column;align-items:stretch;text-align:center}
+.sxtile .ch{display:flex;align-items:center;justify-content:center;box-sizing:border-box;min-width:clamp(42px,3.7vw,62px);
+  height:clamp(50px,4.4vw,72px);padding:0 9px;border:2px solid var(--line,#E5E1D6);border-radius:12px;background:#fff;
+  box-shadow:0 3px 0 var(--line,#E5E1D6);font-family:"JetBrains Mono","Zen Kaku Gothic New",ui-monospace,Menlo,monospace;
+  font-size:clamp(25px,2.3vw,40px);font-weight:700;line-height:1;color:var(--ink,#16191F);white-space:nowrap}
+.sxtile .no{margin-top:6px;font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:clamp(14px,1.12vw,20px);
+  font-weight:700;line-height:1.3;color:var(--blue-deep,#4566B3);white-space:nowrap;padding:0 3px}
+.sxtile.b .ch{border-color:var(--blue-deep,#4566B3);background:var(--blue-soft,#E1E7F4);box-shadow:0 3px 0 rgba(69,102,179,.34);color:var(--navy,#2A3E6E)}
+.sxtile.g .ch{border-color:var(--green-deep,#5B8C72);background:var(--green-soft,#E2EEE7);box-shadow:0 3px 0 rgba(91,140,114,.34)}
+.sxtile.q .ch{border-style:dashed;box-shadow:none;background:var(--paper-2,#F6F6F6);color:var(--ink-4,#6B7283)}
+.sxtile.pl .ch{min-width:0;padding:0 2px;border-color:transparent;background:none;box-shadow:none;color:var(--ink-4,#6B7283)}
+.sxtile.nl .ch,.sxtile.sp .ch{box-shadow:none;border-style:dashed;font-family:inherit;font-size:clamp(14px,1.12vw,20px);font-weight:900}
+.sxtile.nl .ch{border-color:var(--amber-deep,#9E8350);background:var(--amber-soft,#F2E6CC);color:#7A6332}
+.sxtile.sp .ch{border-color:var(--ink-5,#B8BCC6);background:var(--paper-2,#F6F6F6);color:var(--ink-4,#6B7283)}
+.sxtiles.sm .ch{min-width:clamp(34px,2.9vw,48px);height:clamp(40px,3.4vw,56px);padding:0 7px;font-size:clamp(20px,1.8vw,31px)}
+.sxtiles.sm .sxtile.nl .ch{font-size:clamp(13px,1vw,18px)}
+.sxtray{border:2px solid var(--blue-deep,#4566B3);border-radius:16px;background:var(--blue-soft,#E1E7F4);padding:8px 14px 13px}
+.sxtray .th{font-size:clamp(14px,1.12vw,20px);font-weight:900;color:var(--navy,#2A3E6E);text-align:center;margin-bottom:8px}
+.sxdots{box-sizing:border-box;height:clamp(88px,7.8vw,126px);padding:8px 12px;border:2px solid var(--line,#E5E1D6);border-radius:12px;background:#fff}
+.sxdots svg{display:block;height:100%;width:auto}
+.sxdots .off{fill:var(--line-2,#EFEDE5)}
+.sxdots .on{fill:var(--ink,#16191F)}
+.sxgrp .sxcell{min-width:clamp(190px,16vw,270px);text-align:left}
+.sxgrp .sxcell .bar{padding:5px 12px}
+.sxgrp .sxcell .body{padding:8px 14px;line-height:1.6}
 /* ═══════════ 補足モーダル（3科目で共有）═══════════
    凍結ベースの器は「見出し＋文」だけを並べる作りで、本文 14px・器 780px だった。
    1年生は読まない。図・動き・大きい字を受け取れる器に替える。
@@ -1817,7 +1877,7 @@ body{word-break:keep-all}
   <section class="slide" data-ref="print" data-color="blue">
     <div class="head"><div class="badge blue"><svg class="float" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16" /> <path d="M4 7V5a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2" /> <path d="M9 20h6" /></svg></div>
       <div><div class="eyebrow">Python ／ 最初の​1行</div><h2><span class="accent">print</span> は、​画面に文字を出す命令</h2></div></div>
-    <div class="lead">最初に打つのは、​この​1行です。<b>print</b> は、​カッコの​中に書いた​ものを画面に出します。​<span class="suppchip" data-supp="quote">引用符は​シングルとダブルの​どちらを使うか</span></div>
+    <div class="lead">最初に打つのは、​この​1行です。<b>print</b> は、​カッコの​中に書いた​ものを画面に出します。​<span class="suppchip" data-supp="printflow">文字が画面に出るまでに​起きている​こと</span><span class="suppchip" data-supp="quote">引用符は​シングルとダブルの​どちらを使うか</span></div>
     <div class="demogrid">
       <div>
         <div class="demolab"><svg viewBox="0 0 24 24"><polyline points="9 8 5 12 9 16"/><polyline points="15 8 19 12 15 16"/></svg>Colab に打つ​（クリックで実行）<span class="ltoggle"><span class="pill"></span><button class="on" data-mode="py"><svg viewBox="0 0 24 24"><polyline points="9 8 5 12 9 16"/><polyline points="15 8 19 12 15 16"/></svg>Python</button><button data-mode="pseudo"><svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h10M5 17h7"/></svg>日本語の​手順</button></span></div>
@@ -3089,7 +3149,93 @@ const SUPP={
     +'<div class="o">1行目</div><div class="e">ZeroDivisionError: division by zero</div></div></div>'}],
   quiz:{q:'エラーが何行も​出ました。​最初に読むのは​どこですか。',
    opts:['いちばん上の行','いちばん下の行','真ん中​あたり'],ans:1,
-   why:'<b>いちばん下です。</b>そこにエラーの​種類と内容が書いてあります。​上の​行は​「どこで起きたか」の​道すじなので、​種類を読んでから​見れば​足ります。'}}
+   why:'<b>いちばん下です。</b>そこにエラーの​種類と内容が書いてあります。​上の​行は​「どこで起きたか」の​道すじなので、​種類を読んでから​見れば​足ります。'}},
+
+ printflow:{tag:'補足 ／ print のしくみ',ttl:'文字が画面に出るまで',sub:'print は文字列を出力先に渡すだけで、​字を描くのは​ブラウザです。​順に押して、​文字がどこでどう​変わるかを見てください。',
+  heroH:'<code>print(\'Hello\')</code> を実行した​あとの5段',
+  hero:'<div data-swg data-init="s1">'
+   +'<div class="supsw"><button data-sw="s1">1 読む</button><button data-sw="s2">2 文字列にする</button><button data-sw="s3">3 出力先に渡す</button><button data-sw="s4">4 番号にして​送る</button><button data-sw="s5">5 字を描く</button></div>'
+   +'<div class="sxmap">'
+   +'<div class="sxzone"><div class="zh">Google のコンピュータ</div><div class="sxflow">'
+   +'<div class="sxbox sxzb" data-lit="s1"><div class="bh">Python</div><div class="bt">1行を読む</div></div>'
+   +'<div class="sxarrow sxar" data-lit="s1"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>'
+   +'<div class="sxbox sxzb" data-lit="s2 s3"><div class="bh">print</div><div class="bt">文字列にする</div></div>'
+   +'<div class="sxarrow sxar" data-lit="s3"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>'
+   +'<div class="sxbox sxzb" data-lit="s3 s4"><div class="bh">出力先</div><div class="bt">番号にして​送る</div></div>'
+   +'</div></div>'
+   +'<div class="sxwire" data-lit="s4"><span class="wl">ネット</span><svg viewBox="0 0 92 22"><path d="M4 11h82M76 3l10 8-10 8"/></svg></div>'
+   +'<div class="sxzone"><div class="zh">手元の PC</div><div class="sxflow">'
+   +'<div class="sxbox sxzb" data-lit="s5" data-littype="g"><div class="bh">ブラウザ</div><div class="bt">字を描く</div></div>'
+   +'</div></div>'
+   +'</div>'
+   +'<div class="sxstage">'
+   +'<div data-when="s1"><div class="sxrow">'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile b"><div class="ch">print</div></div></div><div class="gc b">命令の​名前</div></div>'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile pl"><div class="ch">(</div></div><div class="sxtile q"><div class="ch">\'</div></div>'
+   +'<div class="sxtile g"><div class="ch">H</div></div><div class="sxtile g"><div class="ch">e</div></div><div class="sxtile g"><div class="ch">l</div></div><div class="sxtile g"><div class="ch">l</div></div><div class="sxtile g"><div class="ch">o</div></div>'
+   +'<div class="sxtile q"><div class="ch">\'</div></div><div class="sxtile pl"><div class="ch">)</div></div></div>'
+   +'<div class="gc g">カッコの​中に書いた​もの。​引用符は、​文字列の​始まりと終わりの印</div></div>'
+   +'</div></div>'
+   +'<div data-when="s2"><div class="sxrow">'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile g"><div class="ch">H</div></div><div class="sxtile g"><div class="ch">e</div></div><div class="sxtile g"><div class="ch">l</div></div><div class="sxtile g"><div class="ch">l</div></div><div class="sxtile g"><div class="ch">o</div></div></div>'
+   +'<div class="gc g">print に届いた5文字</div></div>'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile nl"><div class="ch">改行</div></div></div><div class="gc a">print が足す</div></div>'
+   +'</div></div>'
+   +'<div data-when="s3"><div class="sxrow">'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile b"><div class="ch">print</div></div></div><div class="gc b">出力先に渡す</div></div>'
+   +'<div class="sxarrow sxar lit"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>'
+   +'<div class="sxtray"><div class="th">出力先</div><div class="sxtiles sm"><div class="sxtile g"><div class="ch">H</div></div><div class="sxtile g"><div class="ch">e</div></div><div class="sxtile g"><div class="ch">l</div></div><div class="sxtile g"><div class="ch">l</div></div><div class="sxtile g"><div class="ch">o</div></div><div class="sxtile nl"><div class="ch">改行</div></div></div></div>'
+   +'</div></div>'
+   +'<div data-when="s4"><div class="sxrow">'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile g"><div class="ch">H</div><div class="no">72</div></div><div class="sxtile g"><div class="ch">e</div><div class="no">101</div></div><div class="sxtile g"><div class="ch">l</div><div class="no">108</div></div><div class="sxtile g"><div class="ch">l</div><div class="no">108</div></div><div class="sxtile g"><div class="ch">o</div><div class="no">111</div></div><div class="sxtile nl"><div class="ch">改行</div><div class="no">10</div></div></div>'
+   +'<div class="gc">文字ごとに、​番号が決まっている</div></div>'
+   +'</div></div>'
+   +'<div data-when="s5"><div class="sxrow ctr">'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile b"><div class="ch">72</div></div></div><div class="gc b">届いた​番号</div></div>'
+   +'<div class="sxarrow sxar lit"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>'
+   +'<div class="sxgrp"><div class="sxtiles"><div class="sxtile g"><div class="ch">H</div></div></div><div class="gc g">文字に戻す</div></div>'
+   +'<div class="sxarrow sxar lit"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>'
+   +'<div class="sxgrp"><div class="sxdots"><svg viewBox="0 0 60 84"><g class="off"><circle cx="18" cy="6" r="4.6"/><circle cx="30" cy="6" r="4.6"/><circle cx="42" cy="6" r="4.6"/><circle cx="18" cy="18" r="4.6"/><circle cx="30" cy="18" r="4.6"/><circle cx="42" cy="18" r="4.6"/><circle cx="18" cy="30" r="4.6"/><circle cx="30" cy="30" r="4.6"/><circle cx="42" cy="30" r="4.6"/><circle cx="18" cy="54" r="4.6"/><circle cx="30" cy="54" r="4.6"/><circle cx="42" cy="54" r="4.6"/><circle cx="18" cy="66" r="4.6"/><circle cx="30" cy="66" r="4.6"/><circle cx="42" cy="66" r="4.6"/><circle cx="18" cy="78" r="4.6"/><circle cx="30" cy="78" r="4.6"/><circle cx="42" cy="78" r="4.6"/></g><g class="on"><circle cx="6" cy="6" r="4.6"/><circle cx="54" cy="6" r="4.6"/><circle cx="6" cy="18" r="4.6"/><circle cx="54" cy="18" r="4.6"/><circle cx="6" cy="30" r="4.6"/><circle cx="54" cy="30" r="4.6"/><circle cx="6" cy="42" r="4.6"/><circle cx="18" cy="42" r="4.6"/><circle cx="30" cy="42" r="4.6"/><circle cx="42" cy="42" r="4.6"/><circle cx="54" cy="42" r="4.6"/><circle cx="6" cy="54" r="4.6"/><circle cx="54" cy="54" r="4.6"/><circle cx="6" cy="66" r="4.6"/><circle cx="54" cy="66" r="4.6"/><circle cx="6" cy="78" r="4.6"/><circle cx="54" cy="78" r="4.6"/></g></svg></div><div class="gc">字の​形を、​画面の​点で描く</div></div>'
+   +'<div class="sxarrow sxar lit"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>'
+   +'<div class="sxgrp"><div class="sxterm sxcell"><div class="bar"><span class="dot" style="background:#E06C75"></span><span class="dot" style="background:#E5C07B"></span><span class="dot" style="background:#98C379"></span><span class="t">Colab のセル</span></div><div class="body"><span class="c">print(\'Hello\')</span><div class="o">Hello</div></div></div><div class="gc g">セルの​下に出る</div></div>'
+   +'</div></div>'
+   +'</div>'
+   +'<div class="sxnote" data-when="s1">Python が1行を読む。print という​名前の​命令を探し、​カッコの​中の​文字列を渡す。</div>'
+   +'<div class="sxnote" data-when="s2">print は受け取った​ものを文字列​（文字の​並び）にし、<b>最後に改行を1つ足す</b>。</div>'
+   +'<div class="sxnote" data-when="s3">print は字を描かない。<b>出力先に渡したら​終わり。</b></div>'
+   +'<div class="sxnote" data-when="s4">出力先が文字を1つずつ​番号にする。​宛先などの​情報を付けて、​ネットで手元の​ブラウザへ送る。</div>'
+   +'<div class="sxnote g" data-when="s5"><b>手元の​ブラウザ</b>が番号を文字に戻し、​字の​形を画面の​点で描く。​ここで文字が画面に出る。</div>'
+   +'</div>',
+  secs:[
+  {h:'数も​文字列になる',side:true,b:'<code>print(2026)</code> の 2026 は数ですが、print が受け取ると 2・0・2・6 の4文字になります。<b>print が出力先に渡すのは、​いつも​文字列です。</b>',
+   fig:'<div class="sxrow">'
+    +'<div class="sxgrp"><div class="sxtiles sm"><div class="sxtile b"><div class="ch">2026</div></div></div><div class="gc b">数</div></div>'
+    +'<div class="sxarrow sxar lit"><svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>'
+    +'<div class="sxgrp"><div class="sxtiles sm"><div class="sxtile g"><div class="ch">2</div></div><div class="sxtile g"><div class="ch">0</div></div><div class="sxtile g"><div class="ch">2</div></div><div class="sxtile g"><div class="ch">6</div></div><div class="sxtile nl"><div class="ch">改行</div></div></div><div class="gc g">文字列</div></div>'
+    +'</div>'},
+  {h:'日本語は1文字で3バイト',b:'文字には1つずつ​番号があり、​送る​ときは​その​番号を 0〜255 の数で表します。​この数1つが1バイトです。​半角の​英数字は1バイト、​ひらがなと漢字の​ほとんどは3バイトです。<code>print(\'小船 幹生\')</code> の中の5文字は、<b>13バイト</b>になります。',
+   fig:'<div class="sxrow"><div class="sxgrp"><div class="sxtiles wide">'
+    +'<div class="sxtile g"><div class="ch">小</div><div class="no">229 176 143</div></div>'
+    +'<div class="sxtile g"><div class="ch">船</div><div class="no">232 136 185</div></div>'
+    +'<div class="sxtile sp"><div class="ch">空白</div><div class="no">32</div></div>'
+    +'<div class="sxtile g"><div class="ch">幹</div><div class="no">229 185 185</div></div>'
+    +'<div class="sxtile g"><div class="ch">生</div><div class="no">231 148 159</div></div>'
+    +'</div><div class="gc">5文字が13バイトになる</div><div class="gc n">小 の番号は 23567。送る​ときは 229・176・143 の3バイトで表す（UTF-8 という​決まり）</div></div></div>'},
+  {h:'つながる​先が替わっても、print の書き方は​同じ',b:'出力先には​「標準出力」という​名前が付いています。Colab では​セルの​下の​出力欄に、​手元の PC では​ターミナルにつながっています。<b>どこにつなぐかは、Colab やターミナルが決めます。</b>',
+   fig:'<div data-swg data-init="colab">'
+    +'<div class="supsw"><button data-sw="colab">Colab で動かす</button><button data-sw="local">手元の PC で動かす</button></div>'
+    +'<div class="sxflow" style="gap:12px">'
+    +'<div class="sxbox lit"><div class="bh">print</div><div class="bt">文字列を渡す</div></div>'
+    +'<div class="sxbox lit"><div class="bh">出力先</div><div class="bt">標準出力</div></div>'
+    +'<div class="sxbox" data-lit="colab" data-littype="g" data-gone="local"><div class="bh">セルの​下の​出力欄</div><div class="bt">ブラウザが描く</div></div>'
+    +'<div class="sxbox" data-lit="local" data-littype="g" data-gone="colab"><div class="bh">ターミナル</div><div class="bt">字を描く</div></div>'
+    +'</div>'
+    +'<div class="sxnote" data-when="colab">出力先は、​ネットの​先の​ブラウザにつながっている。</div>'
+    +'<div class="sxnote" data-when="local">出力先は、​同じ PC のターミナルにつながっている。​ネットは​通らない。</div>'
+    +'</div>'}],
+  quiz:{q:'<code>print(2026)</code> と <code>print(\'2026\')</code> を実行します。​画面に出た2行は、​見分けられますか。',
+   opts:['見分けられない','見分けられる'],ans:0,
+   why:'<b>見分けられません。</b>どちらも <code>2026</code> と出ます。print は数も​文字列にして​渡します。​引用符は​文字列に含まれないので、​画面には​出ません。Python の中では​数と文字列は​別の​もので、第4回で扱います。'}}
 };
 /* ═══════════ 補足モーダルの​描画（3科目で共有）═══════════
    凍結ベースの openSupp は {見出し, 本文} を並べるだけだった。​図も​動きも​受け取れない。
