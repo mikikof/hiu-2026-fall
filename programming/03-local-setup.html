@@ -1,0 +1,620 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="手元の PC に Python と VS Code を入れる手順（Windows・Mac）。プログラミング入門の配布資料です。">
+<title>Python 導入マニュアル</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23d97706'/%3E%3Cpath d='M9 11l6 5-6 5M17 22h7' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<script>(function(){try{var h=(location.hash||'').toLowerCase();var o=h==='#windows'?'win':(h==='#mac'?'mac':'');if(!o){try{o=window.localStorage.getItem('pn-local-setup:os')||'';}catch(e){o='';}}if(o==='win'||o==='mac'){document.documentElement.setAttribute('data-os',o);}}catch(e){}})();</script>
+<style>
+/* 導入マニュアル（プログラミング入門）— 縦に読む案内のページ。build_local_setup.py が HTML の中に入れる */
+:root{
+  --paper:#f6f4ef; --card:#ffffff; --ink:#1b2230; --muted:#4f5868; --line:#dcd7cc; --soft:#efebe2;
+  --acc:#9a4a06; --acc-bg:#fff4e2; --acc-line:#f0c27a; --acc-strong:#d97706;
+  --link:#1d4ed8; --ok:#166534; --ok-bg:#e8f6ec; --ok-ink:#ffffff; --warn:#9f1239; --warn-bg:#fff0f3;
+  --badge-bg:#b45309; --badge-ink:#ffffff;
+  --code-bg:#f1efe9; --code-ink:#1b2230; --kbd-bg:#ffffff;
+  --mock-bg:#ffffff; --mock-line:#cfd5df; --mock-ink:#1f2937; --mock-muted:#5b6576;
+  --shadow:0 1px 2px rgba(20,24,33,.06),0 4px 14px rgba(20,24,33,.05);
+  --bar-h:58px;
+  --font:"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+  --mono:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#14161b; --card:#1c1f26; --ink:#e8eaef; --muted:#b3b9c6; --line:#343944; --soft:#232731;
+    --acc:#fbbf24; --acc-bg:#2b2416; --acc-line:#6b5222; --acc-strong:#f59e0b;
+    --link:#93b4ff; --ok:#4ade80; --ok-bg:#16291d; --ok-ink:#0b1f12; --warn:#fda4af; --warn-bg:#2c1820;
+    --badge-bg:#f59e0b; --badge-ink:#1b1f27;
+    --code-bg:#262a33; --code-ink:#eef0f4; --kbd-bg:#2b3039;
+    --mock-bg:#ffffff; --mock-line:#cfd5df; --mock-ink:#1f2937; --mock-muted:#5b6576;
+    --shadow:0 1px 2px rgba(0,0,0,.4);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14161b; --card:#1c1f26; --ink:#e8eaef; --muted:#b3b9c6; --line:#343944; --soft:#232731;
+  --acc:#fbbf24; --acc-bg:#2b2416; --acc-line:#6b5222; --acc-strong:#f59e0b;
+  --link:#93b4ff; --ok:#4ade80; --ok-bg:#16291d; --ok-ink:#0b1f12; --warn:#fda4af; --warn-bg:#2c1820;
+  --badge-bg:#f59e0b; --badge-ink:#1b1f27;
+  --code-bg:#262a33; --code-ink:#eef0f4; --kbd-bg:#2b3039;
+  --shadow:0 1px 2px rgba(0,0,0,.4);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font);font-size:17px;line-height:1.85;
+  overflow-wrap:break-word;font-feature-settings:"palt" 0}
+a{color:var(--link);text-underline-offset:3px}
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--acc-strong);outline-offset:2px;border-radius:6px}
+code,kbd,pre{font-family:var(--mono)}
+p{margin:.55em 0}
+h1,h2,h3,h4{line-height:1.45;word-break:auto-phrase}
+q{quotes:"「" "」"}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ───── 上の帯（OS の切り替えと進み具合）。高さは状態で変えない */
+.topbar{position:sticky;top:0;z-index:20;height:var(--bar-h);background:var(--paper);background:color-mix(in srgb,var(--paper) 92%,transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.topin{max-width:1240px;height:100%;margin:0 auto;padding:0 16px;display:flex;align-items:center;gap:12px}
+.brand{font-weight:700;font-size:15px;white-space:nowrap;color:var(--muted)}
+.brand b{color:var(--ink)}
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:999px;padding:3px;background:var(--card);flex:none}
+.seg button{font:inherit;font-size:15px;font-weight:700;border:0;background:transparent;color:var(--muted);padding:5px 14px;border-radius:999px;cursor:pointer;min-height:36px}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.prog{margin-left:auto;display:flex;align-items:center;gap:10px;min-width:0;flex:0 1 auto}
+.progtxt{font-size:14px;color:var(--muted);white-space:nowrap}
+.progtxt b{color:var(--ink);font-size:16px}
+.progbar{width:140px;height:8px;border-radius:99px;background:var(--soft);overflow:hidden;flex:0 1 140px;min-width:28px}
+.progbar i{display:block;height:100%;width:0;background:var(--ok);border-radius:99px;transition:width .25s}
+.prog .none{font-size:14px;color:var(--muted)}
+html:not([data-os]) .prog .has{display:none}
+html[data-os] .prog .none{display:none}
+
+/* ───── 全体の並び（広い画面では左に目次） */
+.wrap{max-width:1240px;margin:0 auto;padding:0 16px 80px;display:block}
+.main{max-width:760px;margin:0 auto;min-width:0}
+.toc{display:none}
+@media (min-width:1100px){
+  .wrap{display:grid;grid-template-columns:268px minmax(0,760px);gap:48px;justify-content:center}
+  .main{margin:0}
+  .toc{display:block;position:sticky;top:calc(var(--bar-h) + 20px);align-self:start;max-height:calc(100vh - var(--bar-h) - 40px);overflow:auto;
+    padding:18px 0 18px;font-size:15px;line-height:1.5}
+}
+.toc .th{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.04em;margin:16px 0 6px}
+.toc ol,.toc ul{list-style:none;margin:0;padding:0}
+.toc a{display:flex;gap:8px;align-items:flex-start;color:var(--ink);text-decoration:none;padding:5px 8px;border-radius:8px}
+.toc a:hover{background:var(--soft)}
+.toc a[aria-current="true"]{background:var(--acc-bg);box-shadow:inset 3px 0 0 var(--acc-strong)}
+.toc .tn{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);font-size:12px;font-weight:700;display:grid;place-items:center;margin-top:1px;color:var(--muted);background:var(--card)}
+.toc li.is-done .tn{background:var(--ok);border-color:var(--ok);color:var(--ok-ink)}
+.toc li.is-done .tn span{display:none}
+.toc li.is-done .tn::after{content:"✓";font-size:13px}
+html:not([data-os]) .toc .steps-toc{display:none}
+/* 広い画面: 手順のカードは「見えるもの」を右に並べる。読ませる節の行は 760px までにする */
+@media (min-width:1280px){
+  .wrap{grid-template-columns:248px minmax(0,920px);gap:36px}
+  .main{max-width:920px}
+  .hero,section.sec:not(.needos){max-width:760px}
+  .sbody{display:grid;grid-template-columns:minmax(0,1fr) 330px;column-gap:24px;align-items:start}
+  .sbody>*{grid-column:1}
+  .sbody>.see{grid-column:2;grid-row:1 / span 12;position:sticky;top:calc(var(--bar-h) + 16px);margin-top:10px}
+  .sbody>.see .mockrow{grid-template-columns:1fr}
+  .sbody>.see .finder{grid-template-columns:1fr}
+}
+
+/* ───── 見出しまわり */
+.hero{padding:34px 0 8px}
+.kicker{font-size:14px;font-weight:700;color:var(--acc);letter-spacing:.04em}
+h1{font-size:34px;margin:.2em 0 .2em;letter-spacing:.01em}
+.sub{font-size:18px;color:var(--muted);margin:.2em 0 .8em}
+.lead{font-size:17px}
+.asof{font-size:16px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin:16px 0 0}
+section.sec{padding-top:34px;scroll-margin-top:calc(var(--bar-h) + 12px)}
+h2{font-size:26px;margin:0 0 .5em;padding-bottom:.25em;border-bottom:2px solid var(--line)}
+h2 .rng{font-size:15px;color:var(--muted);font-weight:700;margin-left:.5em;white-space:nowrap}
+h3{font-size:20px;margin:0 0 .3em}
+
+/* OS ごとの中身。選んでいない OS は見せない（印刷も同じ） */
+html[data-os="win"] .os-mac{display:none!important}
+html[data-os="mac"] .os-win{display:none!important}
+html:not([data-os]) .needos{display:none!important}
+html[data-os] .pickos{display:none!important}
+.print-os{display:none}
+html[data-os] .tos,html[data-os] .pcrow{display:none!important}
+.needh{margin-top:20px}
+
+/* OS を選ぶ箱（何も選んでいないとき） */
+.pickos{margin:22px 0 0;background:var(--acc-bg);border:1.5px solid var(--acc-line);border-radius:16px;padding:18px}
+.pickos p{margin:0 0 12px;font-weight:700}
+.pickbtns{display:flex;flex-wrap:wrap;gap:10px}
+.pickbtns button{font:inherit;font-weight:700;font-size:18px;min-height:52px;padding:8px 26px;border-radius:12px;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);cursor:pointer}
+
+/* 小さいカードの並び */
+.cards{display:grid;gap:12px;grid-template-columns:1fr}
+@media (min-width:640px){.cards.two{grid-template-columns:1fr 1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px;box-shadow:var(--shadow)}
+.card h3{font-size:18px}
+.card p{margin:.2em 0 0}
+
+dl.kv{margin:12px 0 0;display:grid;grid-template-columns:max-content 1fr;gap:8px 14px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 18px}
+dl.kv dt{font-weight:700;color:var(--muted);font-size:15px;padding-top:2px}
+dl.kv dd{margin:0;min-width:0}
+@media (max-width:420px){dl.kv{grid-template-columns:1fr;gap:2px}dl.kv dd{margin-bottom:8px}}
+
+.before{margin:4px 0 18px;background:var(--card);border:1px solid var(--line);border-left:5px solid var(--acc-strong);border-radius:12px;padding:12px 16px}
+.before h3{font-size:17px;color:var(--acc);margin:0 0 2px}
+.before p{margin:0}
+
+/* ───── 手順のカード */
+.step{position:relative;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px 18px 16px;margin:0 0 18px;
+  box-shadow:var(--shadow);scroll-margin-top:calc(var(--bar-h) + 12px)}
+.step.is-done{border-color:var(--ok);border-color:color-mix(in srgb,var(--ok) 55%,var(--line));box-shadow:inset 5px 0 0 var(--ok),var(--shadow)}
+.shead{display:flex;align-items:flex-start;gap:12px}
+.num{flex:none;width:40px;height:40px;border-radius:50%;background:var(--badge-bg);color:var(--badge-ink);font-weight:800;font-size:19px;display:grid;place-items:center;margin-top:-2px}
+.step.is-done .num{background:var(--ok);color:var(--ok-ink)}
+.shead h3{flex:1;min-width:0;margin:3px 0 0;font-size:21px}
+.donerow{margin:14px 0 0}
+.done{display:inline-flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:var(--ink);cursor:pointer;
+  border:1.5px solid var(--line);border-radius:12px;padding:8px 16px 8px 12px;min-height:48px;background:var(--card);user-select:none}
+.done input{width:22px;height:22px;margin:0;accent-color:var(--ok);cursor:pointer;flex:none}
+.step.is-done .done{border-color:var(--ok);color:var(--ok);background:var(--ok-bg)}
+.slead{margin:10px 0 0;color:var(--ink)}
+.part{margin:14px 0 0}
+.plabel{display:inline-block;font-size:13px;font-weight:800;letter-spacing:.06em;color:var(--acc);margin:0 0 4px}
+ol.do{margin:0;padding:0 0 0 1.6em}
+ol.do li{margin:.25em 0;padding-left:.15em}
+ol.do li::marker{font-weight:800;color:var(--acc)}
+.note{margin:12px 0 0;background:var(--soft);border-radius:10px;padding:10px 14px;font-size:16px}
+.note.strong{background:var(--warn-bg);border:1.5px solid var(--warn);border:1.5px solid color-mix(in srgb,var(--warn) 45%,transparent)}
+.extra{margin:12px 0 0;border:1px dashed var(--line);border-radius:12px;padding:10px 14px;font-size:16px}
+.extra h4{margin:0 0 2px;font-size:16px}
+.links{margin:10px 0 0;padding:0;list-style:none;font-size:16px}
+.links li{margin:.15em 0}
+.links li::before{content:"↗";color:var(--muted);margin-right:.35em}
+.check{background:var(--ok-bg);border-radius:12px;padding:10px 14px}
+.check p{margin:0}
+
+/* 命令とコピー */
+.cmd{display:flex;align-items:center;gap:8px;margin:10px 0 2px;background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:6px 6px 6px 12px;position:relative;flex-wrap:wrap}
+.cmd .pr{color:var(--muted);opacity:.7;user-select:none;-webkit-user-select:none;font-family:var(--mono);font-size:16px}
+.cmd .cmdtext{flex:1;min-width:0;font-size:16.5px;color:var(--code-ink);background:none;padding:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.cmd .tk{white-space:nowrap}
+.cmd .cmdtext{flex:1 1 auto}
+.cmd .copy{margin-left:auto}
+.copy{flex:none;font:inherit;font-size:14px;font-weight:700;border:1.5px solid var(--ink);background:var(--card);color:var(--ink);border-radius:8px;padding:4px 12px;min-height:36px;cursor:pointer}
+.copy.ok{background:var(--ok);border-color:var(--ok);color:var(--ok-ink)}
+.copymsg{flex-basis:100%;font-size:14px;color:var(--muted);min-height:0}
+.copymsg:empty{display:none}
+pre.out{margin:6px 0 0;background:var(--code-bg);border-radius:10px;padding:8px 12px;font-size:15.5px;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--code-ink);border-left:4px solid var(--ok)}
+pre.out code{background:none;padding:0}
+p code,li code,dd code,td code,.tsee code,.tfix code,.fixp code{font-size:.92em;background:var(--code-bg);border-radius:5px;padding:.05em .35em;overflow-wrap:anywhere}
+.keys{white-space:nowrap}
+code.nw{white-space:nowrap}
+.tl .tk{white-space:nowrap}
+kbd{font-size:14px;background:var(--kbd-bg);border:1px solid var(--line);border-bottom-width:2px;border-radius:5px;padding:0 .35em;color:var(--ink)}
+.fixp{display:block;margin-top:4px}
+
+/* うまくいかないとき（開閉） */
+details.tr{margin:14px 0 0;border:1.5px solid var(--line);border-radius:12px;background:var(--card)}
+details.tr>summary{cursor:pointer;list-style:none;padding:10px 14px;font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px;min-height:44px}
+details.tr>summary::-webkit-details-marker{display:none}
+details.tr>summary::before{content:"";width:9px;height:9px;border-right:2.5px solid var(--warn);border-bottom:2.5px solid var(--warn);transform:rotate(-45deg);transition:transform .15s;flex:none;margin-left:2px}
+details.tr[open]>summary::before{transform:rotate(45deg)}
+details.tr>summary .cnt{font-weight:500;color:var(--muted);font-size:14px}
+.tlist{padding:0 14px 12px}
+.tentry{border-top:1px solid var(--line);padding:10px 0 4px}
+.tentry:first-child{border-top:0;padding-top:2px}
+.tsee{font-weight:700}
+.tsee q{font-family:var(--mono);font-weight:600;font-size:.94em;overflow-wrap:anywhere}
+.trow{display:grid;grid-template-columns:4.2em 1fr;gap:2px 8px;margin-top:4px;font-size:16px}
+.trow .k{font-size:13px;font-weight:800;color:var(--muted);padding-top:3px;letter-spacing:.04em}
+.trow .v{min-width:0}
+.tstep{display:inline-block;font-size:12.5px;font-weight:800;border:1.5px solid var(--acc-line);color:var(--acc);border-radius:999px;padding:0 8px;margin-right:6px;vertical-align:2px;white-space:nowrap}
+.tblock{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:4px 16px 8px;margin:0 0 14px}
+.tblock>h3{font-size:17px;margin:12px 0 0;color:var(--muted)}
+
+/* 違いの表（狭い画面では行ごとの箱に） */
+table.diff{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:16px}
+table.diff th,table.diff td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;text-align:left}
+table.diff thead th{border-top:0;background:var(--soft);font-size:14px;color:var(--muted)}
+table.diff tbody th{font-size:15px;width:26%}
+table.diff td{min-width:0;overflow-wrap:anywhere}
+@media (max-width:640px){
+  table.diff,table.diff tbody,table.diff tr,table.diff th,table.diff td{display:block;width:auto}
+  table.diff thead{display:none}
+  table.diff tbody tr{border-top:1px solid var(--line);padding:8px 12px}
+  table.diff tbody tr:first-child{border-top:0}
+  table.diff tbody th{border:0;padding:4px 0;width:auto}
+  table.diff td{border:0;padding:2px 0 2px 5.2em;position:relative}
+  table.diff td::before{content:attr(data-h);position:absolute;left:0;top:4px;font-size:12.5px;font-weight:800;color:var(--muted)}
+}
+.after{margin:12px 0 0}
+
+dl.others{margin:0}
+dl.others dt{font-weight:700;margin:14px 0 2px}
+dl.others dd{margin:0;padding-left:0}
+.ask{margin:18px 0 0;background:var(--acc-bg);border:1.5px solid var(--acc-line);border-radius:14px;padding:12px 16px;font-weight:700}
+footer.foot{margin-top:40px;padding-top:16px;border-top:1px solid var(--line);font-size:16px;color:var(--muted)}
+footer.foot ul{list-style:none;padding:0;margin:6px 0}
+
+/* ───── 見えるもの（画面の形をまねた図）。図の地は画面の色のまま */
+.see .plabel{margin-bottom:6px}
+.mock{background:var(--mock-bg);color:var(--mock-ink);border:1.5px solid var(--mock-line);border-radius:12px;overflow:hidden;font-size:14px;line-height:1.55;max-width:100%}
+.mbar{height:30px;display:flex;align-items:center;padding:0 10px;background:#eef1f5;border-bottom:1px solid var(--mock-line);gap:8px}
+.mbar .mtitle{font-size:12.5px;color:var(--mock-muted);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mbar-win{justify-content:space-between}
+.wctl{display:flex;gap:14px}
+.wctl i{display:block;width:10px;height:10px;border:1.5px solid #8a94a6;border-radius:2px}
+.wctl i:first-child{height:0;border-width:1.5px 0 0;margin-top:5px}
+.mbar-mac .dots{display:flex;gap:6px}
+.mbar-mac .dots i{display:block;width:11px;height:11px;border-radius:50%;background:#c9ced8}
+.mbar-mac .mtitle{flex:1;text-align:center;margin-right:50px}
+.mbody{padding:12px}
+.mk{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--badge-bg);color:var(--badge-ink);font-weight:800;font-size:13px;margin-right:6px;flex:none;font-family:var(--font)}
+.btnlike{display:inline-block;border-radius:8px;padding:5px 14px;background:#1f5fd6;color:#fff;font-weight:700;font-size:14px}
+.btnlike.small{padding:3px 10px;font-size:13px}
+.btnlike.ghost{background:#fff;color:#334155;border:1px solid #c3cad6}
+.btnlike.yellow{background:#ffd343;color:#1f2937;border:1px solid #d9b229}
+.hl{outline:2.5px solid var(--acc-strong);outline-offset:2px;border-radius:6px}
+.hl2{outline:2.5px solid var(--acc-strong);outline-offset:2px}
+
+.term .mbody{padding:0}
+.tbody{padding:10px 12px;font-family:var(--mono);font-size:14px;line-height:1.6;min-height:84px}
+.term-win .tbody{background:#0c0c0c;color:#d4d4d4}
+.term-mac .tbody{background:#ffffff;color:#111111}
+.term-win .mbar{background:#1f1f1f;border-color:#333}
+.term-win .wctl i{border-color:#9aa0a6}
+.tl{white-space:pre-wrap;overflow-wrap:anywhere}
+.tp{opacity:.75}
+.tn{font-family:var(--font);opacity:.8;font-size:13.5px}
+.term-win .tn{color:#b8c0cc}
+.term-mac .tn{color:#4b5563}
+.enter{display:inline-block;font-family:var(--font);font-size:12px;font-weight:800;border:1.5px solid currentColor;border-radius:4px;padding:0 5px;margin-left:4px;color:#fbbf24}
+.term-mac .enter{color:#b45309}
+.cur{display:inline-block;width:8px;height:15px;background:currentColor;opacity:.75;vertical-align:-2px}
+/* 人ごとに違う所（名前・機種名）。等幅にしない（全角の括弧のまわりが空いて、空白に見えるため） */
+.ph{font-family:var(--font);font-weight:500;font-size:.9em;border:1px dashed currentColor;border-radius:4px;padding:0 .25em;margin:0 .1em;white-space:nowrap;opacity:.9}
+
+.store{display:grid;grid-template-columns:56px 1fr;gap:10px 12px;align-items:center}
+.appicon{width:56px;height:56px;border-radius:12px;background:#e5e9f0;display:grid;place-items:center;font-family:var(--mono);font-weight:700;color:#475569}
+.appname{font-weight:800;font-size:16px}
+.apppub{font-size:13px;color:var(--mock-muted)}
+.appbtn{grid-column:1/-1;display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.btnnote{font-size:12.5px;color:var(--mock-muted);margin-left:4px}
+.addr{font-family:var(--mono);font-size:12.5px;background:#eef1f5;border-bottom:1px solid var(--mock-line);padding:6px 12px;color:#475569;word-break:break-all}
+.m-browser .mbody{padding:0}
+.web{padding:14px 12px}
+.webh{font-weight:800;font-size:15px;margin-bottom:8px}
+.webbtn{display:flex;align-items:center}
+.finder{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:2px 10px}
+.fitem{display:flex;align-items:center;gap:8px;padding:5px 6px;font-size:13px;overflow-wrap:anywhere;min-width:0}
+.fic{flex:none;width:22px;height:26px;border-radius:4px;background:#dfe5ee;border:1px solid #c3cbd8}
+.fic.app{border-radius:7px;width:24px;height:24px;background:#cfd8e6}
+.fic.cmdf{background:#2f3542;border-color:#2f3542}
+.wiz .wizh{font-weight:800;font-size:15px;margin-bottom:8px}
+.wizrow{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;margin:5px 0}
+.cb{flex:none;width:15px;height:15px;border:1.5px solid #7b8597;border-radius:3px;margin-top:3px;background:#fff;position:relative}
+.cb.on{background:#1f5fd6;border-color:#1f5fd6}
+.cb.on::after{content:"";position:absolute;left:4px;top:1px;width:4px;height:8px;border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.wizfoot{display:flex;justify-content:flex-end;align-items:center;margin-top:10px}
+.dmg{display:flex;align-items:center;justify-content:space-around;gap:10px;padding:10px 0}
+.dmgitem{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:13px;text-align:center}
+.bigapp{width:54px;height:54px;border-radius:13px;background:#cfd8e6;border:1px solid #b9c3d3}
+.bigfolder{width:62px;height:48px;border-radius:6px;background:#9cc3f5;border:1px solid #7aa9e6}
+.dmgarrow{display:flex;align-items:center;font-size:22px;color:#64748b}
+.dmgarrow::after{content:"→";margin-left:2px}
+
+.m-vsc{background:#ffffff}
+.vtop{height:22px;background:#eef1f5;border-bottom:1px solid var(--mock-line)}
+.vwrap{display:grid;grid-template-columns:30px minmax(0,1fr)}
+.vact{background:#e6e9ef;display:flex;flex-direction:column;gap:10px;padding:10px 7px}
+.vact i{display:block;width:16px;height:16px;border-radius:4px;background:#c3cad6}
+.vmain{min-width:0;position:relative}
+.palette{margin:10px auto 0;width:92%;border:1px solid #c3cad6;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);background:#fff;overflow:hidden}
+.pin{font-family:var(--mono);font-size:13.5px;padding:6px 10px;border-bottom:1px solid #e2e6ed}
+.pitem{display:flex;align-items:center;margin:6px;padding:5px 8px;background:#e8f0fe;font-size:13.5px}
+.vblank{height:40px}
+.vside{padding:10px 10px 12px}
+.vsh{font-size:12px;font-weight:800;color:var(--mock-muted);letter-spacing:.05em;margin-bottom:6px}
+.vsearch{font-size:13px;border:1px solid #c3cad6;border-radius:4px;padding:2px 8px;margin:6px 0 4px;font-family:var(--mono)}
+.ext1{display:grid;grid-template-columns:1fr auto;gap:0 8px;padding:6px 4px;border-bottom:1px solid #eef1f5}
+.exn{font-weight:800;font-size:14px}
+.exp{grid-column:1;font-size:12.5px;color:var(--mock-muted)}
+.exb{grid-row:1/3;grid-column:2;display:flex;align-items:center}
+.banner{background:#fff4d6;border-bottom:1px solid #f1d38a;padding:8px 10px;font-size:13px;line-height:1.55}
+.blinks{display:inline-flex;align-items:center;gap:10px;margin-left:6px;color:#1f5fd6;white-space:nowrap}
+.trustbox{display:flex;gap:8px;padding:12px 10px 14px;flex-wrap:wrap}
+.vtabs{display:flex;align-items:center;justify-content:space-between;gap:6px;background:#f3f5f8;border-bottom:1px solid var(--mock-line);padding:0 8px 0 0;min-height:34px}
+.vtab{background:#fff;border-right:1px solid var(--mock-line);padding:6px 10px;font-size:13px;font-family:var(--mono);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.vrun{position:relative;display:inline-flex;align-items:center;padding:2px 4px}
+.tri{display:inline-block;width:0;height:0;border-left:11px solid #2f3542;border-top:7px solid transparent;border-bottom:7px solid transparent}
+.tip{position:absolute;right:0;top:calc(100% + 6px);background:#2f3542;color:#fff;font-size:12px;padding:3px 8px;border-radius:5px;white-space:nowrap;z-index:2}
+.vcode{display:flex;gap:12px;font-family:var(--mono);font-size:13.5px;padding:34px 10px 26px;word-break:break-all}
+.vcode .ln{color:#94a3b8}
+.vpanel{border-top:1px solid var(--mock-line)}
+.vph{font-size:11.5px;font-weight:800;color:var(--mock-muted);padding:4px 10px;letter-spacing:.05em}
+.vpo{font-family:var(--mono);font-size:13.5px;padding:2px 10px 10px}
+.vstatus{background:#e6e9ef;font-size:11.5px;color:#475569;text-align:right;padding:2px 10px}
+.kern{display:inline-flex;align-items:center;font-size:12.5px;padding:2px 6px}
+.nbcell{display:flex;align-items:center;gap:10px;margin:12px 10px;border:1px solid #c3cad6;border-radius:6px;padding:8px}
+.cellrun{display:inline-flex;align-items:center;padding:2px 4px}
+.cellcode{font-family:var(--mono);font-size:13px;word-break:break-all;min-width:0}
+.dlg{margin:6px 10px 12px;border:1px solid #c3cad6;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);padding:10px;font-size:13px}
+.dlgb{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}
+.mockrow{display:grid;gap:10px;grid-template-columns:1fr}
+@media (min-width:640px){.mockrow{grid-template-columns:1fr 1fr}}
+.hubbtns{display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.menuh{font-weight:800;font-size:13.5px;border-bottom:1px solid #e2e6ed;padding-bottom:4px;margin-bottom:4px}
+.menui{display:flex;align-items:center;font-size:13.5px;padding:4px 6px}
+.menui .sub{margin-left:auto;color:#64748b}
+.menusub{margin:2px 0 0 18px;border:1px solid #c3cad6;border-radius:6px;padding:2px;box-shadow:0 4px 12px rgba(0,0,0,.1)}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  h1{font-size:28px}
+  h2{font-size:23px}
+  .shead h3{font-size:19px}
+  .step{padding:14px 14px 14px;border-radius:16px}
+  .num{width:34px;height:34px;font-size:17px}
+  .brand{display:none}
+  .progtxt .lbl{display:none}
+  .progbar{width:64px}
+  .seg button{padding:5px 12px}
+  .tbody{font-size:12.5px;padding:10px}   /* 打つ命令が端末の図の中で 2 行に割れないように（360px で測った） */
+  .vwrap{grid-template-columns:minmax(0,1fr)}
+  .vact{display:none}
+  .trow{grid-template-columns:1fr;gap:0}
+  .trow .v{margin-bottom:6px}
+  .tlist{padding:0 12px 10px}
+  details.tr>summary{padding:10px 12px}
+}
+
+
+/* ───── 印刷（選んだ OS だけ。開閉は印刷の前に全部開く） */
+@media print{
+  :root{--paper:#fff;--card:#fff;--shadow:none}
+  body{font-size:11pt;background:#fff}
+  .topbar,.toc,.copy,.copymsg,.pickos,.seg,footer.foot .noprint{display:none!important}
+  .wrap{display:block;padding:0}
+  .main{max-width:none}
+  .print-os{display:block;font-weight:700;font-size:12pt;margin:0 0 6pt}
+  html:not([data-os]) .print-os{display:none}
+  .step{break-inside:auto;box-shadow:none}
+  .mock,.check,.cmd,pre.out,.tentry,.part.see,.donerow{break-inside:avoid}
+  .plabel,.shead,h2,h3{break-after:avoid}
+  #trouble .tblock,#trouble>p:not(.ask){display:none}
+  .hero{padding-top:0}
+  a.ext::after{content:" (" attr(href) ")";font-size:9pt;color:#555;word-break:break-all}
+  details.tr>summary::before{display:none}
+  details.tr>summary{break-after:avoid;page-break-after:avoid}   /* 「うまくいかないとき」の見出しだけがページの下に残らないように */
+}
+</style>
+</head>
+<body>
+<div id="live" class="sr" aria-live="polite"></div>
+<header class="topbar"><div class="topin"><div class="brand"><b>導入マニュアル</b>　プログラミング入門</div><div class="seg" role="group" aria-label="入れる PC"><button type="button" data-pick="win" aria-pressed="false">Windows</button><button type="button" data-pick="mac" aria-pressed="false">Mac</button></div><div class="prog"><span class="progtxt has"><span class="lbl">できた手順 </span><b id="prog-n">0</b> / 11</span><span class="progbar has" aria-hidden="true"><i id="prog-bar"></i></span><span class="none">PC を選んでください</span></div></div></header>
+<div class="wrap"><nav class="toc" aria-label="目次"><div class="th">このページ</div><ul><li><a href="#why">入れるとできること</a></li><li><a href="#what">入れるものと要るもの</a></li></ul><div class="steps-toc"><div class="th">Python 本体</div><ol><li data-n="1"><a href="#step-1"><span class="tn"><span>1</span></span><span><span class="os-win">Python Install Manager の入手</span><span class="os-mac">インストーラーのダウンロード</span></span></a></li><li data-n="2"><a href="#step-2"><span class="tn"><span>2</span></span><span><span class="os-win">設定チェックと本体のインストール</span><span class="os-mac">Python のインストール</span></span></a></li><li data-n="3"><a href="#step-3"><span class="tn"><span>3</span></span><span>ターミナルの起動</span></a></li><li data-n="4"><a href="#step-4"><span class="tn"><span>4</span></span><span>版の確認</span></a></li></ol><div class="th">VS Code</div><ol><li data-n="5"><a href="#step-5"><span class="tn"><span>5</span></span><span>VS Code のインストール</span></a></li><li data-n="6"><a href="#step-6"><span class="tn"><span>6</span></span><span>日本語の表示</span></a></li><li data-n="7"><a href="#step-7"><span class="tn"><span>7</span></span><span>拡張機能のインストール</span></a></li><li data-n="8"><a href="#step-8"><span class="tn"><span>8</span></span><span>作業用のフォルダー</span></a></li><li data-n="9"><a href="#step-9"><span class="tn"><span>9</span></span><span>jikan.py の実行</span></a></li></ol><div class="th">配布ノート</div><ol><li data-n="10"><a href="#step-10"><span class="tn"><span>10</span></span><span>配布ノートの入手</span></a></li><li data-n="11"><a href="#step-11"><span class="tn"><span>11</span></span><span>配布ノートの実行</span></a></li></ol></div><div class="th">調べるとき</div><ul><li><a href="#trouble">困ったとき</a></li><li><a href="#diff">Colab と手元の違い</a></li><li><a href="#others">ほかの入れ方</a></li></ul></nav><main class="main" id="main">
+<div class="hero"><div class="kicker">プログラミング入門 ／ 手元の PC</div><h1>Python 導入マニュアル</h1><p class="sub">手元の PC に Python と VS Code を入れる手順です。Windows と Mac に分けて書いています。</p><p class="lead">授業は Google Colab で進めます。手元の PC に Python を入れなくても、授業は最後まで受けられます。このページは、自分の PC でも Python を動かしたい人のための手順です。入れるかどうかは、各自で決めてください。</p><p class="asof">2026年10月11日の時点の公式のページと配布物で確かめた内容です。画面の見た目は版によって変わります。図は画面の形をまねて描いたもので、細かいところは実際の画面と違います。</p><p class="print-os" id="print-os"></p><div class="pickos"><p>入れる PC を選ぶと、その PC の手順だけが出ます。</p><div class="pickbtns"><button type="button" data-pick="win">Windows</button><button type="button" data-pick="mac">Mac</button></div></div></div>
+<section class="sec" id="why"><h2>入れるとできること</h2><div class="cards two"><div class="card"><h3>ネットが無いときの実行</h3><p>Python 本体が自分の PC に入るので、インターネットにつながっていなくてもプログラムを動かせます。</p></div><div class="card"><h3>手元に残るファイル</h3><p>Colab で %%writefile を使って作ったファイルは、しばらく操作しないでいるとつながりが切れて消えます。手元の PC では、作ったファイルが自分のフォルダーに残ります。</p></div></div></section>
+<section class="sec" id="what"><h2>入れるものと要るもの</h2><div class="cards"><div class="card"><h3>Python 本体</h3><p>Python のプログラムを動かすものです。入る版は 3.15 です（2026年10月9日に出た、いまの最新の版）。</p></div><div class="card"><h3>VS Code</h3><p>プログラムを書いて動かすためのエディターです。</p></div><div class="card"><h3>拡張機能</h3><p>VS Code に機能を足す部品です。Python 拡張と Jupyter 拡張の 2 つを入れます。</p></div></div><h3 class="needh">要るもの</h3><div class="os-win"><dl class="kv"><dt class="pcrow">PC</dt><dd class="pcrow">Windows</dd><dt>OS</dt><dd>Windows 10（バージョン 19044 以降）か Windows 11</dd><dt>ネット</dt><dd>インターネットへの接続</dd><dt>パスワード</dt><dd>要りません。Python も VS Code も、使っている人の分だけに入ります。</dd></dl></div><div class="os-mac"><dl class="kv"><dt class="pcrow">PC</dt><dd class="pcrow">Mac</dd><dt>OS</dt><dd>macOS 12 以降（VS Code が動く条件。Python は macOS 10.15 以降で入ります）。macOS の版は、アップルメニューの「このMacについて」で見られます。</dd><dt>ネット</dt><dd>インターネットへの接続</dd><dt>パスワード</dt><dd>Mac にログインするときのパスワード（管理者のもの）。Python を入れるときに聞かれます。</dd></dl></div></section>
+<section class="sec needos" id="python"><h2>Python 本体 <span class="rng">手順 1〜4</span></h2><div class="before" id="steps-start"><h3>始める前の注意</h3><p class="os-win">前に Python を入れたことがある PC では、手順 2 で古い Python についての知らせが出ることがあります。そのときは、手順 2 の「うまくいかないとき」を開きます。</p><p class="os-mac">Python を入れる前は、ターミナルで python3 と打たないでください。打つと、Apple の開発用のツール（コマンドラインデベロッパツール）を入れるかを聞く窓が出ます。その窓からツールを入れると、Apple の古い python3 が入ります。窓が出たら「キャンセル」を押します。</p></div><p>11 の手順を上から順に進めます。終えた手順に「できた」の印を付けると、上の帯に進み具合が出ます。印は、このブラウザに残ります。</p><article class="step" id="step-1" data-n="1"><div class="shead"><span class="num" aria-hidden="true">1</span><h3><span class="sr">手順 1 </span><span class="os-win">Python Install Manager の入手</span><span class="os-mac">インストーラーのダウンロード</span></h3></div><div class="os-win"><div class="sbody"><p class="slead">Python Install Manager は、Python 本体を入れたり新しい版に上げたりするための、Python の公式の道具です。python.org は、Windows ではこの道具を Microsoft Store から入れる方法を勧めています。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>Microsoft Store のアプリを開き、上の検索欄に Python Install Manager と打ちます。ブラウザで下のリンクを開き、そこから Store のアプリへ進むこともできます。</li><li>発行元が Python Software Foundation の「Python Install Manager」を選びます。</li><li>入れるためのボタンを押します（表示は「入手」か「インストール」のどちらかです）。</li></ol></div><ul class="links"><li><a class="ext" href="https://apps.microsoft.com/detail/9NQ7512CXL7T?hl=ja-JP&amp;gl=JP" target="_blank" rel="noopener">Microsoft Store の Python Install Manager</a></li><li><a class="ext" href="https://www.python.org/downloads/latest/pymanager/" target="_blank" rel="noopener">python.org の Python Install Manager のページ</a></li></ul><div class="note">名前に版の番号が入った「Python 3.13」「Python 3.12」などのアプリは選びません。Store には、3.14 から版ごとのアプリが出ていません。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-store"><div class="mbar mbar-win"><span class="mtitle"></span><span class="wctl" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="mbody"><div class="store"><div class="appicon" aria-hidden="true">&gt;_</div><div class="appmeta"><div class="appname">Python Install Manager</div><div class="apppub">Python Software Foundation</div></div><div class="appbtn"><span class="mk" aria-hidden="true">3</span><span class="btnlike">入手 ／ インストール</span><span class="btnnote">表示はどちらか一方</span></div></div></div></div></div><div class="extra"><h4>Store が使えない PC</h4><p>python.org の Python Install Manager のページで、Installer (MSIX) のファイル（python-manager-26.4.msix。番号は進むことがあります）をダウンロードします。ダブルクリックして、開いた窓でインストールのボタン（表示は Install かインストール）を押します。Store から入るものと同じ道具です。Store と両方からは入れず、どちらか一方にします。</p></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>スタートメニューを開いて Python install manager と打つと、そのアプリが出てきます。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 1 ができた</label></div><details class="tr os-win"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（1 件）</span><span class="os-mac">（0 件）</span></span></summary><div class="tlist"><div class="tentry os-win" data-t="w-parse"><div class="tsee"><span class="tstep tos">Windows</span>Store からも MSIX のファイルからも入らず、英語のエラーが出た</div><div class="trow"><span class="k">原因</span><div class="v">Windows 10 の 22H2 で、同じことが起きたという報告があります。報告では、しばらくして入るようになりました。</div><span class="k">直し方</span><div class="v tfix">時間をおいて、もう一度入れます。</div></div></div></div></details></div></div><div class="os-mac"><div class="sbody"><p class="slead">Mac では、python.org のインストーラー（.pkg のファイル）で入れます。Apple シリコンの Mac にも Intel の Mac にも、同じファイルが入ります。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>Safari で、下のリンクから python.org の Downloads のページを開きます。</li><li>「Download the latest version for macOS」の下の「Download Python 3.15.0」を押します。番号が 3.15.1 のように進んでいたら、出ているボタンを押します。</li></ol></div><ul class="links"><li><a class="ext" href="https://www.python.org/downloads/" target="_blank" rel="noopener">python.org の Downloads のページ</a></li></ul><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-browser"><div class="mbar mbar-mac"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mtitle"></span></div><div class="mbody"><div class="addr">https://www.python.org/downloads/</div><div class="web"><div class="webh">Download the latest version for macOS</div><div class="webbtn"><span class="mk" aria-hidden="true">2</span><span class="btnlike yellow">Download Python 3.15.0</span></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>ダウンロードのフォルダーに python-3.15.0-macos11.pkg（約 85 MB）ができています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 1 ができた</label></div><details class="tr os-mac"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（0 件）</span><span class="os-mac">（1 件）</span></span></summary><div class="tlist"><div class="tentry os-mac" data-t="m-pkgname"><div class="tsee"><span class="tstep tos">Mac</span>ファイルの名前に macos11 とあり、自分の Mac に入るか分からない</div><div class="trow"><span class="k">原因</span><div class="v">名前の macos11 は、入る macOS の下限ではありません。</div><span class="k">直し方</span><div class="v tfix">macOS 10.15 以降なら、そのまま入れます。</div></div></div></div></details></div></div></article><article class="step" id="step-2" data-n="2"><div class="shead"><span class="num" aria-hidden="true">2</span><h3><span class="sr">手順 2 </span><span class="os-win">設定チェックと本体のインストール</span><span class="os-mac">Python のインストール</span></h3></div><div class="os-win"><div class="sbody"><p class="slead">Python Install Manager を初めて開くと、設定チェックが動きます。設定チェックは、PC の設定を確かめて、足りないものを入れるかを英語で聞いてくる画面です。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>スタートメニューで Python install manager を選んで開きます。</li><li>黒い画面に英語の説明と問いが出ます。問いの行は [y/N] か [Y/n] で終わります。どの問いにも、何も打たずに Enter を押します。</li><li>Python 本体がまだ入っていなければ、続けて Python 3.15 のダウンロードとインストールが進みます。終わるまで画面を閉じずに待ちます。</li><li>インストールが終わって問いが出なくなったら、右上の × で画面を閉じます。画面がひとりでに閉じていれば、そのままでかまいません。</li></ol></div><div class="note">[y/N] は Enter だけで No、[Y/n] は Enter だけで Yes を選んだことになります。Enter だけで答えると、Windows の設定は変えずに、Python 本体だけが入ります。出てくる問いの数は PC によって違います。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock term term-win"><div class="mbar mbar-win"><span class="mtitle"></span><span class="wctl" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="mbody"><div class="tbody"><div class="tl tn">（英語の説明が出ます）</div><div class="tl tq"><span class="tn">（英語の問い）</span> <span class="to">[y/N]</span> <span class="enter">Enter</span></div><div class="tl tq"><span class="tn">（英語の問い）</span> <span class="to">[Y/n]</span> <span class="enter">Enter</span></div><div class="tl tn">（Python 3.15 のダウンロードとインストールが進みます）</div><span class="cur" aria-hidden="true"></span></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>手順 4 で Python 3.15 の版の番号が出れば、この手順もできています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 2 ができた</label></div><details class="tr os-win"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（3 件）</span><span class="os-mac">（0 件）</span></span></summary><div class="tlist"><div class="tentry os-win" data-t="w-launcher"><div class="tsee"><span class="tstep tos">Windows</span>設定チェックの英語の文に「Python launcher」の名前が出た。または <code class="nw">py</code> と打つと can't open file と出た</div><div class="trow"><span class="k">原因</span><div class="v">前に入れた古い Python の起動の道具（Python launcher）が残っていて、新しい命令より先に動いています。</div><span class="k">直し方</span><div class="v tfix">設定の「アプリ」にある、入っているアプリの一覧（表示は「インストール済みアプリ」か「インストールされているアプリ」）で「Python launcher」を探してアンインストールします。そのあと手順 2 をもう一度行います。</div></div></div><div class="tentry os-win" data-t="w-aliascheck"><div class="tsee"><span class="tstep tos">Windows</span>設定チェックの英語の文に「App execution aliases」の名前が出た</div><div class="trow"><span class="k">原因</span><div class="v">python の命令が、Python Install Manager 以外のものを向いています。</div><span class="k">直し方</span><div class="v tfix">何も打たずに Enter を押して設定チェックを終えます。手順 4 で版の番号が出なければ、手順 4 の「Microsoft Store が開いた」の直し方を行います。</div></div></div><div class="tentry os-win" data-t="w-longpath"><div class="tsee"><span class="tstep tos">Windows</span>260 文字より長いパスについての問いが出た</div><div class="trow"><span class="k">原因</span><div class="v">Windows の長いパスの設定は、最初はオフになっています。</div><span class="k">直し方</span><div class="v tfix">何も打たずに Enter を押します（No を選んだことになります）。授業で書くプログラムの範囲では変えなくてかまいません。y を選ぶと、管理者の承認と PC の再起動が要ります。</div></div></div></div></details></div></div><div class="os-mac"><div class="sbody"><div class="part"><span class="plabel">すること</span><ol class="do"><li>ダウンロードのフォルダーの python-3.15.0-macos11.pkg をダブルクリックします。開いてよいかを聞く窓が出たら、開く側のボタンを押します。</li><li>「続ける」を押します。次の画面は英語の説明（Read Me）なので、もう一度「続ける」を押します。</li><li>使用許諾の画面で「続ける」を押し、上から出てくる確認で「同意する」を押します。</li><li>「インストールの種類」の画面では何も変えずに「インストール」を押します。「カスタマイズ」は押しません。</li><li>管理者の確認が出たら、Touch ID に触れるか、Mac にログインするときのパスワードを入れて進めます。</li><li>入れている途中で、Finder に「Python 3.15」のフォルダーの窓が開きます。この窓は閉じずに残します。</li><li>終わりの画面で「閉じる」を押します。インストーラーをゴミ箱に入れるかを聞かれたら、どちらを選んでもかまいません。</li><li>「Python 3.15」の窓の Install Certificates.command をダブルクリックします。ターミナルが開いて、英語の行が出ます。</li></ol></div><div class="note">Install Certificates.command は、Python からインターネットの https のページにつなぐときに使う証明書を入れるファイルです。1 回実行すれば済みます。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-finder"><div class="mbar mbar-mac"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mtitle">Python 3.15</span></div><div class="mbody"><div class="finder"><div class="fitem"><span class="fic app"></span>IDLE</div><div class="fitem hl"><span class="mk" aria-hidden="true">8</span><span class="fic cmdf"></span>Install Certificates.command</div><div class="fitem"><span class="fic doc"></span>License.rtf</div><div class="fitem"><span class="fic doc"></span>Python Documentation.html</div><div class="fitem"><span class="fic app"></span>Python Launcher</div><div class="fitem"><span class="fic doc"></span>ReadMe.rtf</div><div class="fitem"><span class="fic cmdf"></span>Update Shell Profile.command</div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>ターミナルに Successfully installed certifi と update complete が出ていれば、できています。このターミナルの窓は閉じてかまいません。</p><pre class="out"><code>…
+Successfully installed certifi-（版の番号）
+…
+ -- update complete</code></pre></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 2 ができた</label></div><details class="tr os-mac"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（0 件）</span><span class="os-mac">（3 件）</span></span></summary><div class="tlist"><div class="tentry os-mac" data-t="m-window"><div class="tsee"><span class="tstep tos">Mac</span>「Python 3.15」の窓を閉じてしまった</div><div class="trow"><span class="k">原因</span><div class="v">途中で開いた窓は、Finder の「アプリケーション」の中にある「Python 3.15」のフォルダーです。</div><span class="k">直し方</span><div class="v tfix">そのフォルダーを開きます。</div></div></div><div class="tentry os-mac" data-t="m-noext"><div class="tsee"><span class="tstep tos">Mac</span>Install Certificates.command が見当たらない</div><div class="trow"><span class="k">原因</span><div class="v">Finder がファイルの拡張子（.command）を隠していると、Install Certificates とだけ出ます。</div><span class="k">直し方</span><div class="v tfix">Install Certificates をダブルクリックします。</div></div></div><div class="tentry os-mac" data-t="m-idle"><div class="tsee"><span class="tstep tos">Mac</span>IDLE でメニューから窓を開いたら固まり、虹色の円が回り続ける</div><div class="trow"><span class="k">原因</span><div class="v">macOS 27 の変更による不具合です。python.org のリリースのページに注意書きがあります。</div><span class="k">直し方</span><div class="v tfix">IDLE を強制終了します。この授業では IDLE を使わず、VS Code を使います。</div></div></div></div></details></div></div></article><article class="step" id="step-3" data-n="3"><div class="shead"><span class="num" aria-hidden="true">3</span><h3><span class="sr">手順 3 </span>ターミナルの起動</h3></div><div class="os-win"><div class="sbody"><p class="slead">ターミナルは、文字で命令を打って PC を動かす画面です。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>スタートボタンを右クリックし、出てきたメニューの「ターミナル」を押します。Windows 10 では「Windows PowerShell」を押します。</li><li>「ターミナル (管理者)」は選びません。</li></ol></div><div class="note">ターミナルの行のはじめの印は、OS によって $・%・&gt; と違います。打たなくてよい部分です。Windows では PS C:\Users\（名前）&gt; のような行が出て、&gt; のあとに命令を打ちます。このページでは、命令の前に薄い &gt; を付けています。コピーされるのは命令だけです。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock term term-win"><div class="mbar mbar-win"><span class="mtitle"></span><span class="wctl" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="mbody"><div class="tbody"><div class="tl"><span class="tp">PS C:\Users\<span class="ph">名前</span>&gt;</span> <span class="tc"></span></div><span class="cur" aria-hidden="true"></span></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>PS で始まって &gt; で終わる行が出て、文字を打てる状態になっています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 3 ができた</label></div></div></div><div class="os-mac"><div class="sbody"><p class="slead">ターミナルは、文字で命令を打って Mac を動かす画面です。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>Command（⌘）キーを押しながらスペースバーを押して Spotlight を出し、ターミナル と打って Return を押します。</li><li>Python を入れる前から開いていたターミナルの窓は使わず、新しく開いた窓を使います。</li></ol></div><div class="note">ターミナルの行のはじめの印は、OS によって $・%・&gt; と違います。打たなくてよい部分です。Mac では （名前）@（機種名） ~ % のような行が出て、% のあとに命令を打ちます。このページでは、命令の前に薄い % を付けています。コピーされるのは命令だけです。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock term term-mac"><div class="mbar mbar-mac"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mtitle"></span></div><div class="mbody"><div class="tbody"><div class="tl"><span class="tp"><span class="ph">名前</span>@<span class="ph">機種名</span> ~ %</span> <span class="tc"></span></div><span class="cur" aria-hidden="true"></span></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>% で終わる行が出て、文字を打てる状態になっています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 3 ができた</label></div></div></div></article><article class="step" id="step-4" data-n="4"><div class="shead"><span class="num" aria-hidden="true">4</span><h3><span class="sr">手順 4 </span>版の確認</h3></div><div class="os-win"><div class="sbody"><div class="part"><span class="plabel">すること</span><ol class="do"><li>ターミナルに次の命令を打ち、Enter を押します。「コピー」を押して貼り付けてもかまいません。<div class="cmd os-win"><span class="pr" aria-hidden="true">&gt;</span><code class="cmdtext"><span class="tk">python</span> <span class="tk">--version</span></code><button type="button" class="copy" data-cmd="python --version" aria-label="python --version をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div></li></ol></div><div class="note">Windows では python と打ちます（Python Install Manager で入れた場合は python3 でも動きます）。授業の Colab で打っている !python3 の ! は、セルからターミナルへ渡すための印です。ターミナルでは付けません。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock term term-win"><div class="mbar mbar-win"><span class="mtitle"></span><span class="wctl" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="mbody"><div class="tbody"><div class="tl"><span class="tp">PS C:\Users\<span class="ph">名前</span>&gt;</span> <span class="tc"><span class="tk">python</span> <span class="tk">--version</span></span></div><div class="tl to">Python 3.15.0</div><div class="tl"><span class="tp">PS C:\Users\<span class="ph">名前</span>&gt;</span> <span class="tc"></span></div><span class="cur" aria-hidden="true"></span></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>Python 3.15.0 と出れば、Python 本体が入っています。新しい版が出ていれば、最後の番号は進んでいます。</p><pre class="out"><code>Python 3.15.0</code></pre></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 4 ができた</label></div><details class="tr os-win"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（4 件）</span><span class="os-mac">（0 件）</span></span></summary><div class="tlist"><div class="tentry os-win" data-t="w-store"><div class="tsee"><span class="tstep tos">Windows</span>Microsoft Store が開いた。または、Python が見つからないという意味の英語の文が出た</div><div class="trow"><span class="k">原因</span><div class="v">Windows に最初から入っている、Store へ案内するための仮の python に当たっています。</div><span class="k">直し方</span><div class="v tfix">スタートメニューで エイリアス と打ち、出てきた「アプリの実行エイリアスの管理」を開きます（表示は「アプリ実行エイリアス」のこともあります）。「Python (default)」をオンにします。オンになっていたら、一度オフにしてからオンに戻します。そのあとターミナルを閉じて開き直し、もう一度打ちます。</div></div></div><div class="tentry os-win" data-t="w-auto"><div class="tsee"><span class="tstep tos">Windows</span>版の番号の前に、英語の行がいくつか流れた</div><div class="trow"><span class="k">原因</span><div class="v">手順 2 で Python 本体が入っていなかったので、python と打ったときに自動で入りました。</div><span class="k">直し方</span><div class="v tfix">そのままでかまいません。最後に Python 3.15 の版の番号が出ていれば、できています。</div></div></div><div class="tentry os-win" data-t="w-failed"><div class="tsee"><span class="tstep tos">Windows</span><q>Program 'python.exe' failed to run: The system cannot find the path specified</q></div><div class="trow"><span class="k">原因</span><div class="v">python のエイリアス（命令の別名）が壊れています。直っていない不具合として報告されています。</div><span class="k">直し方</span><div class="v tfix">「Microsoft Store が開いた」の直し方と同じ設定の画面で、「Python (default)」を一度オフにしてオンに戻します。直らなければ、Python Install Manager をアンインストールして、手順 1 から入れ直します。</div></div></div><div class="tentry os-win" data-t="w-oldterm"><div class="tsee"><span class="tstep tos">Windows</span>Python を入れる前から開いていたターミナルで打った</div><div class="trow"><span class="k">原因</span><div class="v">ターミナルは、開いたときの設定のまま動きます。あとから入れた Python が見えていません。</div><span class="k">直し方</span><div class="v tfix">ターミナルを閉じて、新しく開いてから打ち直します。</div></div></div></div></details></div></div><div class="os-mac"><div class="sbody"><div class="part"><span class="plabel">すること</span><ol class="do"><li>ターミナルに次の命令を打ち、Return を押します。「コピー」を押して貼り付けてもかまいません。<div class="cmd os-mac"><span class="pr" aria-hidden="true">%</span><code class="cmdtext"><span class="tk">python3</span> <span class="tk">--version</span></code><button type="button" class="copy" data-cmd="python3 --version" aria-label="python3 --version をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div></li></ol></div><div class="note">Mac には python（3 の付かない名前）という命令が無いので、いつも python3 と打ちます。授業の Colab で打っている !python3 の ! は、セルからターミナルへ渡すための印です。ターミナルでは付けません。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock term term-mac"><div class="mbar mbar-mac"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mtitle"></span></div><div class="mbody"><div class="tbody"><div class="tl"><span class="tp"><span class="ph">名前</span>@<span class="ph">機種名</span> ~ %</span> <span class="tc"><span class="tk">python3</span> <span class="tk">--version</span></span></div><div class="tl to">Python 3.15.0</div><div class="tl"><span class="tp"><span class="ph">名前</span>@<span class="ph">機種名</span> ~ %</span> <span class="tc"></span></div><span class="cur" aria-hidden="true"></span></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>Python 3.15.0 と出れば、Python 本体が入っています。新しい版が出ていれば、最後の番号は進んでいます。</p><pre class="out"><code>Python 3.15.0</code></pre></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 4 ができた</label></div><details class="tr os-mac"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（0 件）</span><span class="os-mac">（4 件）</span></span></summary><div class="tlist"><div class="tentry os-mac" data-t="m-clt"><div class="tsee"><span class="tstep tos">Mac</span>「コマンドラインデベロッパツール」を入れるかを聞く窓が出た</div><div class="trow"><span class="k">原因</span><div class="v">入れた Python がまだ見えていない窓（または Python を入れる前）で python3 と打ち、Apple の python3 に当たりました。</div><span class="k">直し方</span><div class="v tfix">「キャンセル」を押します。Python を入れていなければ、手順 1 と 2 を先に行います。入れてあれば、ターミナルを新しく開いて打ち直します。</div></div></div><div class="tentry os-mac" data-t="m-nopy"><div class="tsee"><span class="tstep tos">Mac</span><q>zsh: command not found: python</q></div><div class="trow"><span class="k">原因</span><div class="v">Mac には python（3 の付かない名前）という命令がありません。</div><span class="k">直し方</span><div class="v tfix"><code class="nw">python3 --version</code> と打ちます。</div></div></div><div class="tentry os-mac" data-t="m-old"><div class="tsee"><span class="tstep tos">Mac</span>Python 3.9 など、3.15 より古い番号が出た</div><div class="trow"><span class="k">原因</span><div class="v">Apple の開発用のツールに入っている python3 に当たっています。</div><span class="k">直し方</span><div class="v tfix">次の命令でどの python3 かを確かめます。<div class="cmd os-mac"><span class="pr" aria-hidden="true">%</span><code class="cmdtext"><span class="tk">which</span> <span class="tk">python3</span></code><button type="button" class="copy" data-cmd="which python3" aria-label="which python3 をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div><span class="fixp"><code class="nw">/usr/bin/python3</code> と出たら Apple の python3 です。ターミナルを閉じて新しく開き、もう一度 <code class="nw">python3 --version</code> と打ちます。新しい窓では <code>/Library/Frameworks/Python.framework/Versions/3.15/bin/python3</code> か <code class="nw">/usr/local/bin/python3</code> と出ます。どちらも手順 2 で入れた Python です。</span></div></div></div><div class="tentry os-mac" data-t="m-xcode"><div class="tsee"><span class="tstep tos">Mac</span><q>You have not agreed to the Xcode license agreements.</q> で始まる英語の文</div><div class="trow"><span class="k">原因</span><div class="v">Xcode を入れてある Mac で、Apple の python3 に当たっています。</div><span class="k">直し方</span><div class="v tfix">ターミナルを閉じて新しく開き、もう一度 <code class="nw">python3 --version</code> と打ちます。</div></div></div></div></details></div></div></article></section>
+<section class="sec needos" id="vscode"><h2>VS Code <span class="rng">手順 5〜9</span></h2><article class="step" id="step-5" data-n="5"><div class="shead"><span class="num" aria-hidden="true">5</span><h3><span class="sr">手順 5 </span>VS Code のインストール</h3></div><div class="os-win"><div class="sbody"><p class="slead">VS Code（Visual Studio Code）は、Microsoft が無料で配っているエディターです。エディターは、プログラムのような文字を書くためのアプリです。VS Code は毎週更新されるので、版の番号はこのページを作った時点の 1.141 より進んでいます。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>下のリンクから、VS Code のダウンロードのページを開きます。</li><li>Windows の欄の下の一覧（Other Downloads）で「User Installer (x64)」を選んで、ダウンロードします。Snapdragon などの Arm の PC では「User Installer (Arm64)」を選びます。</li><li>ダウンロードした、名前が VSCodeUserSetup で始まる .exe をダブルクリックします。右クリックの「管理者として実行」は使いません。</li><li>使用許諾の画面で「同意する」を選び、「次へ」で進みます。「追加タスクの選択」の画面では、最初から付いている印をそのままにします。</li><li>「インストール」を押し、終わったら「完了」を押します。</li></ol></div><ul class="links"><li><a class="ext" href="https://code.visualstudio.com/download" target="_blank" rel="noopener">VS Code のダウンロードのページ</a></li></ul><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-wiz"><div class="mbar mbar-win"><span class="mtitle"></span><span class="wctl" aria-hidden="true"><i></i><i></i><i></i></span></div><div class="mbody"><div class="wiz"><div class="wizh">追加タスクの選択</div><div class="wizrow"><span class="cb"></span>エクスプローラーのファイル コンテキスト メニューに [Code で開く] アクションを追加する</div><div class="wizrow"><span class="cb"></span>エクスプローラーのディレクトリ コンテキスト メニューに [Code で開く] アクションを追加する</div><div class="wizrow"><span class="cb on"></span>サポートされているファイルの種類のエディターとして、Code を登録する</div><div class="wizrow"><span class="cb on"></span>PATH への追加（再起動後に使用可能）</div><div class="wizfoot"><span class="mk" aria-hidden="true">4</span><span class="btnlike">次へ</span></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>ターミナルを新しく開いて次の命令を打つと、1 行目に 1.141.0 のような版の番号が出ます。</p><div class="cmd os-win"><span class="pr" aria-hidden="true">&gt;</span><code class="cmdtext"><span class="tk">code</span> <span class="tk">--version</span></code><button type="button" class="copy" data-cmd="code --version" aria-label="code --version をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 5 ができた</label></div><details class="tr os-win"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（2 件）</span><span class="os-mac">（0 件）</span></span></summary><div class="tlist"><div class="tentry os-win" data-t="w-admin"><div class="tsee"><span class="tstep tos">Windows</span><q>This User Installer is not meant to be run as an Administrator.</q> で始まる英語の警告</div><div class="trow"><span class="k">原因</span><div class="v">VS Code の User Installer を、管理者として実行しました。</div><span class="k">直し方</span><div class="v tfix">いったん止めて、.exe をふつうにダブルクリックし直します。</div></div></div><div class="tentry os-win" data-t="w-code"><div class="tsee"><span class="tstep tos">Windows</span><code class="nw">code --version</code> と打つと、見つからないというエラーが出た</div><div class="trow"><span class="k">原因</span><div class="v">VS Code を入れる前から開いていたターミナルで打っています。</div><span class="k">直し方</span><div class="v tfix">ターミナルを閉じて、新しく開いてから打ち直します。</div></div></div></div></details></div></div><div class="os-mac"><div class="sbody"><p class="slead">VS Code（Visual Studio Code）は、Microsoft が無料で配っているエディターです。エディターは、プログラムのような文字を書くためのアプリです。VS Code は毎週更新されるので、版の番号はこのページを作った時点の 1.141 より進んでいます。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>下のリンクから VS Code のダウンロードのページを開き、macOS の欄の「Mac Universal」を押します。</li><li>ダウンロードした .dmg のファイルをダブルクリックします。開いた窓で、Visual Studio Code を Applications（アプリケーション）のフォルダーへドラッグします。</li><li>Finder の「アプリケーション」にある Visual Studio Code をダブルクリックします。.dmg の窓の中からは開きません。</li><li>開いてよいかを聞く窓が出たら、開く側のボタン（表示は「開く」など）を押します。</li></ol></div><ul class="links"><li><a class="ext" href="https://code.visualstudio.com/download" target="_blank" rel="noopener">VS Code のダウンロードのページ</a></li></ul><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-dmg"><div class="mbar mbar-mac"><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><span class="mtitle"></span></div><div class="mbody"><div class="dmg"><div class="dmgitem"><span class="bigapp" aria-hidden="true"></span>Visual Studio Code</div><div class="dmgarrow" aria-hidden="true"><span class="mk" aria-hidden="true">2</span></div><div class="dmgitem"><span class="bigfolder" aria-hidden="true"></span>Applications</div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>VS Code の窓が開けば、できています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 5 ができた</label></div><details class="tr os-mac"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（0 件）</span><span class="os-mac">（1 件）</span></span></summary><div class="tlist"><div class="tentry os-mac" data-t="m-nodrag"><div class="tsee"><span class="tstep tos">Mac</span>Finder の「アプリケーション」に Visual Studio Code が無い</div><div class="trow"><span class="k">原因</span><div class="v">.dmg の窓から、Applications のフォルダーへドラッグしていません。</div><span class="k">直し方</span><div class="v tfix">.dmg のファイルをもう一度開き、Visual Studio Code を Applications へドラッグします。</div></div></div></div></details></div></div></article><article class="step" id="step-6" data-n="6"><div class="shead"><span class="num" aria-hidden="true">6</span><h3><span class="sr">手順 6 </span>日本語の表示</h3></div><div><div class="sbody"><p class="slead">入れたばかりの VS Code は、英語で表示されます。日本語の言語パックを入れて切り替えます。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>VS Code で <span class="os-win"><span class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></span></span><span class="os-mac"><span class="keys"><kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></span></span> を押します。上に、命令を名前で探して実行する入力欄（コマンドパレット）が開きます。</li><li>入力欄に display と打ち、出てきた「Configure Display Language」を押します。</li><li>一覧から「日本語」を選びます。再起動を聞かれたら「Restart」を押します。</li></ol></div><div class="note">右下に、日本語の言語パックを勧める知らせが出ていれば、その「インストールして再起動」を押してもかまいません。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-vsc "><div class="vtop"></div><div class="vwrap"><div class="vact" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="vmain"><div class="palette"><div class="pin">&gt; display</div><div class="pitem hl"><span class="mk" aria-hidden="true">2</span>Configure Display Language</div></div><div class="vblank"></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>VS Code が開き直り、メニューが「ファイル」「編集」のように日本語になっています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 6 ができた</label></div><details class="tr"><summary>うまくいかないとき <span class="cnt">（1 件）</span></summary><div class="tlist"><div class="tentry" data-t="b-nolangnote"><div class="tsee">右下に、日本語の言語パックを勧める知らせが出ない</div><div class="trow"><span class="k">原因</span><div class="v">この知らせは、出ないこともあります。</div><span class="k">直し方</span><div class="v tfix">コマンドパレットで display と打ち、「Configure Display Language」から日本語を選びます。</div></div></div></div></details></div></div></article><article class="step" id="step-7" data-n="7"><div class="shead"><span class="num" aria-hidden="true">7</span><h3><span class="sr">手順 7 </span>拡張機能のインストール</h3></div><div><div class="sbody"><p class="slead">拡張機能は、VS Code に機能を足す部品です。.py を動かすための Python 拡張と、配布ノート（.ipynb）を開くための Jupyter 拡張を入れます。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li><span class="os-win"><span class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd></span></span><span class="os-mac"><span class="keys"><kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>X</kbd></span></span> を押して、左に拡張機能の一覧を開きます。</li><li>上の検索欄に Python と打ち、発行元が Microsoft の「Python」の「インストール」を押します。</li><li>検索欄に Jupyter と打ち、発行元が Microsoft の「Jupyter」の「インストール」を押します。</li></ol></div><ul class="links"><li><a class="ext" href="https://marketplace.visualstudio.com/items?itemName=ms-python.python" target="_blank" rel="noopener">Python 拡張のページ</a></li><li><a class="ext" href="https://marketplace.visualstudio.com/items?itemName=ms-toolsai.jupyter" target="_blank" rel="noopener">Jupyter 拡張のページ</a></li></ul><div class="note">Python 本体は拡張機能に入っていないので、手順 1〜4 で入れたものを使います。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-vsc m-ext"><div class="vtop"></div><div class="vwrap"><div class="vact" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="vmain"><div class="vside"><div class="vsh">拡張機能</div><div class="vsearch">Python</div><div class="ext1"><div class="exn">Python</div><div class="exp">Microsoft</div><div class="exb"><span class="mk" aria-hidden="true">2</span><span class="btnlike small">インストール</span></div></div><div class="vsearch">Jupyter</div><div class="ext1"><div class="exn">Jupyter</div><div class="exp">Microsoft</div><div class="exb"><span class="mk" aria-hidden="true">3</span><span class="btnlike small">インストール</span></div></div></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>インストール済みの一覧に、Python・Pylance・Python Debugger・Python Environments・Jupyter が並びます。Python 拡張を入れると、Pylance などの 3 つも一緒に入ります。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 7 ができた</label></div><details class="tr"><summary>うまくいかないとき <span class="cnt">（2 件）</span></summary><div class="tlist"><div class="tentry" data-t="b-similar"><div class="tsee">検索の結果に、Python や Jupyter の名前の拡張がいくつも並ぶ</div><div class="trow"><span class="k">原因</span><div class="v">名前の似た拡張が、ほかの発行元からも出ています。</div><span class="k">直し方</span><div class="v tfix">名前の下に出る発行元が Microsoft のものを選びます。</div></div></div><div class="tentry" data-t="b-nojup"><div class="tsee">インストール済みの一覧に Jupyter が無い</div><div class="trow"><span class="k">原因</span><div class="v">Jupyter 拡張は、Python 拡張を入れても一緒には入りません。</div><span class="k">直し方</span><div class="v tfix">検索欄に Jupyter と打ち、発行元が Microsoft の「Jupyter」を入れます。</div></div></div></div></details></div></div></article><article class="step" id="step-8" data-n="8"><div class="shead"><span class="num" aria-hidden="true">8</span><h3><span class="sr">手順 8 </span>作業用のフォルダー</h3></div><div><div class="sbody"><div class="part"><span class="plabel">すること</span><ol class="do"><li><span class="os-win">エクスプローラー</span><span class="os-mac">Finder </span>で、<span class="os-win">ドキュメント</span><span class="os-mac">書類</span>の中に新しいフォルダーを作り、名前を python-renshu にします。</li><li>VS Code の「ファイル」メニューから「フォルダーを開く...」を選び、python-renshu を開きます。</li><li>上に制限モードのバナーが出たら「管理」を押し、開いた画面で「信頼する」を押します。</li></ol></div><div class="note">制限モードは、開いたフォルダーの中のコードを VS Code が動かさないようにしておく状態です。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-vsc "><div class="vtop"></div><div class="vwrap"><div class="vact" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="vmain"><div class="banner">制限モードは、安全なコード参照のためのものです。すべての機能を有効にするには、このフォルダーを信頼します。<span class="blinks"><span class="mk" aria-hidden="true">3</span><u>管理</u> <u>詳細情報</u></span></div><div class="trustbox"><span class="btnlike small">信頼する</span><span class="btnlike small ghost">信頼しない</span></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>バナーが消え、下の帯の「制限モード」の表示も消えています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 8 ができた</label></div><details class="tr"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（1 件）</span><span class="os-mac">（2 件）</span></span></summary><div class="tlist"><div class="tentry" data-t="b-restricted"><div class="tsee"><q>制限モードは、安全なコード参照のためのものです。すべての機能を有効にするには、このフォルダーを信頼します。</q></div><div class="trow"><span class="k">原因</span><div class="v">VS Code は、新しく開いたフォルダーを、確認の窓を出さずに制限モードで開きます。このあいだは Python 拡張が働きません。</div><span class="k">直し方</span><div class="v tfix">バナーの「管理」を押し、開いた画面で「信頼する」を押します。</div></div></div><div class="tentry os-mac" data-t="m-access"><div class="tsee"><span class="tstep tos">Mac</span>ターミナルや VS Code が、書類やデスクトップのフォルダーへのアクセスの許可を求めてきた</div><div class="trow"><span class="k">原因</span><div class="v">そのアプリから、そのフォルダーを初めて開きました。</div><span class="k">直し方</span><div class="v tfix">「許可」を押します。</div></div></div></div></details></div></div></article><article class="step" id="step-9" data-n="9"><div class="shead"><span class="num" aria-hidden="true">9</span><h3><span class="sr">手順 9 </span>jikan.py の実行</h3></div><div><div class="sbody"><p class="slead">授業の Colab で作った jikan.py の print の行を、手元のファイルに書いて動かします。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>左のエクスプローラーで、python-renshu の名前の横にあるボタンのうち、マウスを乗せると「新しいファイル...」と出るものを押します。jikan.py と打って <span class="os-win">Enter</span><span class="os-mac">Return</span> を押します。</li><li>開いた jikan.py に次の 1 行を打つか貼り付けて、<span class="os-win"><span class="keys"><kbd>Ctrl</kbd>+<kbd>S</kbd></span></span><span class="os-mac"><span class="keys"><kbd>⌘</kbd>+<kbd>S</kbd></span></span> で保存します。<div class="cmd is-code"><code class="cmdtext">print(&#x27;1限 プログラミング入門&#x27;)</code><button type="button" class="copy" data-cmd="print(&#x27;1限 プログラミング入門&#x27;)" aria-label="print(&#x27;1限 プログラミング入門&#x27;) をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div></li><li>右下の帯に Python の版が出ていないときは、<span class="os-win"><span class="keys"><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></span></span><span class="os-mac"><span class="keys"><kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd></span></span> でコマンドパレットを開きます。「Python: インタープリターを選択」を押し、出てきた一覧から、手順 1〜4 で入れた Python 3.15 を選びます。インタープリターは、ここでは .py を動かす Python 本体のことです。</li><li>エディターの右上の ▷ のボタンを押します。</li></ol></div><div class="note strong">日本語の表示では、▷ にマウスを乗せると「新しい Python ファイル」と出ます。これは訳の誤りで、押すと jikan.py が実行されます（英語の表示では Run Python File）。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-vsc m-editor"><div class="vtop"></div><div class="vwrap"><div class="vact" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="vmain"><div class="vtabs"><span class="vtab">jikan.py</span><span class="vrun hl"><span class="mk" aria-hidden="true">4</span><span class="tri" aria-hidden="true"></span><span class="tip">新しい Python ファイル</span></span></div><div class="vcode"><span class="ln">1</span><span>print('1限 プログラミング入門')</span></div><div class="vpanel"><div class="vph">ターミナル</div><div class="vpo">1限 プログラミング入門</div></div><div class="vstatus"><span>（選んだ Python の版）</span></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>下のターミナルに 1限 プログラミング入門 と出ます。同じターミナルに次の命令を打っても、同じ 1 行が出ます。</p><div class="cmd os-win"><span class="pr" aria-hidden="true">&gt;</span><code class="cmdtext"><span class="tk">python</span> <span class="tk">jikan.py</span></code><button type="button" class="copy" data-cmd="python jikan.py" aria-label="python jikan.py をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div><div class="cmd os-mac"><span class="pr" aria-hidden="true">%</span><code class="cmdtext"><span class="tk">python3</span> <span class="tk">jikan.py</span></code><button type="button" class="copy" data-cmd="python3 jikan.py" aria-label="python3 jikan.py をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div><pre class="out"><code>1限 プログラミング入門</code></pre></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 9 ができた</label></div><details class="tr"><summary>うまくいかないとき <span class="cnt"><span class="os-win">（5 件）</span><span class="os-mac">（4 件）</span></span></summary><div class="tlist"><div class="tentry" data-t="b-tip"><div class="tsee">右上の ▷ にマウスを乗せると「新しい Python ファイル」と出る</div><div class="trow"><span class="k">原因</span><div class="v">Python 拡張の日本語の訳の誤りです。英語の表示では Run Python File です。</div><span class="k">直し方</span><div class="v tfix">そのまま押します。押すと、開いているファイルが実行されます。</div></div></div><div class="tentry" data-t="b-norun"><div class="tsee">エディターの右上に ▷ のボタンが無い</div><div class="trow"><span class="k">原因</span><div class="v">フォルダーが制限モードのままか、Python 拡張が入っていません。</div><span class="k">直し方</span><div class="v tfix">手順 8 の「信頼する」と、手順 7 の Python 拡張を確かめます。</div></div></div><div class="tentry" data-t="b-nointerp"><div class="tsee">インタープリターの一覧に Python 3.15 が出ない</div><div class="trow"><span class="k">原因</span><div class="v">Python を入れる前から VS Code を開いていました。</div><span class="k">直し方</span><div class="v tfix">VS Code を閉じて、開き直します。</div></div></div><div class="tentry" data-t="b-cantopen"><div class="tsee"><code class="nw">can&#x27;t open file</code> と <code>[Errno 2] No such file or directory</code> を含む英語の文が出た</div><div class="trow"><span class="k">原因</span><div class="v">ターミナルのいる場所（フォルダー）に jikan.py がありません。</div><span class="k">直し方</span><div class="v tfix">jikan.py を、VS Code で開いたフォルダー（python-renshu）のいちばん上に置きます。▷ を押すと下に開くターミナルで、もう一度打ちます。</div></div></div><div class="tentry os-win" data-t="w-onlyname"><div class="tsee"><span class="tstep tos">Windows</span>ターミナルで <code class="nw">jikan.py</code> とだけ打つと、別の窓が開いてすぐ閉じる</div><div class="trow"><span class="k">原因</span><div class="v">Windows の決まりで、ファイルの名前だけを打つと別の窓で開きます。</div><span class="k">直し方</span><div class="v tfix">前に python を付けて <code class="nw">python jikan.py</code> と打ちます。</div></div></div></div></details></div></div></article></section>
+<section class="sec needos" id="notebook"><h2>配布ノート <span class="rng">手順 10〜11</span></h2><article class="step" id="step-10" data-n="10"><div class="shead"><span class="num" aria-hidden="true">10</span><h3><span class="sr">手順 10 </span>配布ノートの入手</h3></div><div><div class="sbody"><p class="slead">配布ノートは、授業の Colab で開いている .ipynb のファイルです。</p><div class="part"><span class="plabel">すること</span><ol class="do"><li>下のリンクから授業資料の入口を開き、その回の「演習ノートをダウンロード」を押します。</li><li>Colab で書き込んだノートを持ってくるときは、Colab の「ファイル」メニューの「ダウンロード」から「.ipynb をダウンロード」を押します。</li><li>ダウンロードのフォルダーにできた .ipynb を、python-renshu のフォルダーへ移します。</li></ol></div><ul class="links"><li><a class="ext" href="https://mikikof.github.io/hiu-2026-fall/programming/" target="_blank" rel="noopener">授業資料の入口（プログラミング入門）</a></li></ul><div class="part see"><span class="plabel">見えるもの</span><div class="mockrow"><div class="mock m-hub"><div class="mbody"><div class="hubbtns"><span class="btnlike ghost">開く</span><span class="btnlike ghost">演習ノートを Colab で開く</span><span class="btnlike hl2"><span class="mk" aria-hidden="true">1</span>演習ノートをダウンロード</span></div></div></div><div class="mock m-menu"><div class="mbody"><div class="menuh">ファイル</div><div class="menui">ダウンロード <span class="sub" aria-hidden="true">▸</span></div><div class="menusub"><div class="menui hl"><span class="mk" aria-hidden="true">2</span>.ipynb をダウンロード</div><div class="menui">.py をダウンロード</div></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>VS Code の左のエクスプローラーに、その .ipynb が出ています。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 10 ができた</label></div><details class="tr"><summary>うまくいかないとき <span class="cnt">（1 件）</span></summary><div class="tlist"><div class="tentry" data-t="b-nohubbtn"><div class="tsee">授業資料の入口で、その回の欄に「演習ノートをダウンロード」が無い</div><div class="trow"><span class="k">原因</span><div class="v">演習ノートの無い回か、まだ公開されていない回です。</div><span class="k">直し方</span><div class="v tfix">Colab で開いているノートなら、Colab の「ファイル」メニューから .ipynb をダウンロードします。</div></div></div></div></details></div></div></article><article class="step" id="step-11" data-n="11"><div class="shead"><span class="num" aria-hidden="true">11</span><h3><span class="sr">手順 11 </span>配布ノートの実行</h3></div><div><div class="sbody"><div class="part"><span class="plabel">すること</span><ol class="do"><li>VS Code の左のエクスプローラーで、.ipynb のファイルを押して開きます。</li><li>右上の「カーネルの選択」を押し、「Python 環境...」の中から Python 3.15 を選びます。カーネルは、ノートのセルを実行する Python のことです。</li><li>セルの左の ▷（セルの実行）を押します。</li><li>ipykernel のパッケージが必要という窓が出たら、「インストール」を押します。ipykernel は、VS Code からセルを実行するための部品です。</li></ol></div><div class="note">%%writefile で作ったファイルは、.ipynb と同じフォルダーにできます。Colab の /content にあたる場所です。</div><div class="part see"><span class="plabel">見えるもの</span><div class="mock m-vsc m-nb"><div class="vtop"></div><div class="vwrap"><div class="vact" aria-hidden="true"><i></i><i></i><i></i><i></i></div><div class="vmain"><div class="vtabs"><span class="vtab">03-where-python-runs_演習.ipynb</span><span class="kern hl"><span class="mk" aria-hidden="true">2</span>カーネルの選択</span></div><div class="nbcell"><span class="cellrun hl"><span class="mk" aria-hidden="true">3</span><span class="tri" aria-hidden="true"></span></span><span class="cellcode">print('1限 プログラミング入門')</span></div><div class="dlg"><div class="dlgt">'Python 3.15.0' でセルを実行するには、 ipykernel パッケージが必要です。</div><div class="dlgb"><span class="mk" aria-hidden="true">4</span><span class="btnlike small">インストール</span><span class="btnlike small ghost">カーネルを変更する</span><span class="btnlike small ghost">詳細情報</span></div></div></div></div></div></div><div class="part"><span class="plabel">できたかの確かめ方</span><div class="check"><p>セルの下に、そのセルの結果が出ます。</p></div></div><div class="donerow"><label class="done"><input type="checkbox" class="donebox"> 手順 11 ができた</label></div><details class="tr"><summary>うまくいかないとき <span class="cnt">（3 件）</span></summary><div class="tlist"><div class="tentry" data-t="b-noenv"><div class="tsee"><q>Python 環境が検出されませんでした。</q> で始まる文が出た</div><div class="trow"><span class="k">原因</span><div class="v">Python を入れる前から VS Code を開いていました。</div><span class="k">直し方</span><div class="v tfix">VS Code を閉じて、開き直します。</div></div></div><div class="tentry" data-t="b-kernel"><div class="tsee">「インストール」を押しても、セルが動かない</div><div class="trow"><span class="k">原因</span><div class="v">Jupyter 拡張と Python 3.15 を組み合わせて最後まで動くかは、このマニュアルを作った時点では確かめられていません。</div><span class="k">直し方</span><div class="v tfix">そのノートは Colab で開いて続けます。</div></div></div><div class="tentry" data-t="b-bang"><div class="tsee">! で始まるセル（<code class="nw">!python3 jikan.py</code> など）の結果が、Colab と違う</div><div class="trow"><span class="k">原因</span><div class="v">! のあとの命令は、手元の PC のターミナルに渡されます。動き方は PC によって違います。</div><span class="k">直し方</span><div class="v tfix">そのファイルは、手順 9 のように VS Code のターミナルで動かします。</div></div></div></div></details></div></div></article></section>
+<section class="sec" id="trouble"><h2>困ったとき</h2><p>画面に出たものから探せるように、手順ごとに並べました。それぞれの手順の「うまくいかないとき」と同じ中身です。</p><div class="tblock"><h3>Python 本体（手順 1〜4）</h3><div class="tentry os-win" data-t="w-parse"><div class="tsee"><span class="tstep">手順 1</span><span class="tstep tos">Windows</span>Store からも MSIX のファイルからも入らず、英語のエラーが出た</div><div class="trow"><span class="k">原因</span><div class="v">Windows 10 の 22H2 で、同じことが起きたという報告があります。報告では、しばらくして入るようになりました。</div><span class="k">直し方</span><div class="v tfix">時間をおいて、もう一度入れます。</div></div></div><div class="tentry os-mac" data-t="m-pkgname"><div class="tsee"><span class="tstep">手順 1</span><span class="tstep tos">Mac</span>ファイルの名前に macos11 とあり、自分の Mac に入るか分からない</div><div class="trow"><span class="k">原因</span><div class="v">名前の macos11 は、入る macOS の下限ではありません。</div><span class="k">直し方</span><div class="v tfix">macOS 10.15 以降なら、そのまま入れます。</div></div></div><div class="tentry os-win" data-t="w-launcher"><div class="tsee"><span class="tstep">手順 2</span><span class="tstep tos">Windows</span>設定チェックの英語の文に「Python launcher」の名前が出た。または <code class="nw">py</code> と打つと can't open file と出た</div><div class="trow"><span class="k">原因</span><div class="v">前に入れた古い Python の起動の道具（Python launcher）が残っていて、新しい命令より先に動いています。</div><span class="k">直し方</span><div class="v tfix">設定の「アプリ」にある、入っているアプリの一覧（表示は「インストール済みアプリ」か「インストールされているアプリ」）で「Python launcher」を探してアンインストールします。そのあと手順 2 をもう一度行います。</div></div></div><div class="tentry os-win" data-t="w-aliascheck"><div class="tsee"><span class="tstep">手順 2</span><span class="tstep tos">Windows</span>設定チェックの英語の文に「App execution aliases」の名前が出た</div><div class="trow"><span class="k">原因</span><div class="v">python の命令が、Python Install Manager 以外のものを向いています。</div><span class="k">直し方</span><div class="v tfix">何も打たずに Enter を押して設定チェックを終えます。手順 4 で版の番号が出なければ、手順 4 の「Microsoft Store が開いた」の直し方を行います。</div></div></div><div class="tentry os-win" data-t="w-longpath"><div class="tsee"><span class="tstep">手順 2</span><span class="tstep tos">Windows</span>260 文字より長いパスについての問いが出た</div><div class="trow"><span class="k">原因</span><div class="v">Windows の長いパスの設定は、最初はオフになっています。</div><span class="k">直し方</span><div class="v tfix">何も打たずに Enter を押します（No を選んだことになります）。授業で書くプログラムの範囲では変えなくてかまいません。y を選ぶと、管理者の承認と PC の再起動が要ります。</div></div></div><div class="tentry os-mac" data-t="m-window"><div class="tsee"><span class="tstep">手順 2</span><span class="tstep tos">Mac</span>「Python 3.15」の窓を閉じてしまった</div><div class="trow"><span class="k">原因</span><div class="v">途中で開いた窓は、Finder の「アプリケーション」の中にある「Python 3.15」のフォルダーです。</div><span class="k">直し方</span><div class="v tfix">そのフォルダーを開きます。</div></div></div><div class="tentry os-mac" data-t="m-noext"><div class="tsee"><span class="tstep">手順 2</span><span class="tstep tos">Mac</span>Install Certificates.command が見当たらない</div><div class="trow"><span class="k">原因</span><div class="v">Finder がファイルの拡張子（.command）を隠していると、Install Certificates とだけ出ます。</div><span class="k">直し方</span><div class="v tfix">Install Certificates をダブルクリックします。</div></div></div><div class="tentry os-mac" data-t="m-idle"><div class="tsee"><span class="tstep">手順 2</span><span class="tstep tos">Mac</span>IDLE でメニューから窓を開いたら固まり、虹色の円が回り続ける</div><div class="trow"><span class="k">原因</span><div class="v">macOS 27 の変更による不具合です。python.org のリリースのページに注意書きがあります。</div><span class="k">直し方</span><div class="v tfix">IDLE を強制終了します。この授業では IDLE を使わず、VS Code を使います。</div></div></div><div class="tentry os-win" data-t="w-store"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Windows</span>Microsoft Store が開いた。または、Python が見つからないという意味の英語の文が出た</div><div class="trow"><span class="k">原因</span><div class="v">Windows に最初から入っている、Store へ案内するための仮の python に当たっています。</div><span class="k">直し方</span><div class="v tfix">スタートメニューで エイリアス と打ち、出てきた「アプリの実行エイリアスの管理」を開きます（表示は「アプリ実行エイリアス」のこともあります）。「Python (default)」をオンにします。オンになっていたら、一度オフにしてからオンに戻します。そのあとターミナルを閉じて開き直し、もう一度打ちます。</div></div></div><div class="tentry os-win" data-t="w-auto"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Windows</span>版の番号の前に、英語の行がいくつか流れた</div><div class="trow"><span class="k">原因</span><div class="v">手順 2 で Python 本体が入っていなかったので、python と打ったときに自動で入りました。</div><span class="k">直し方</span><div class="v tfix">そのままでかまいません。最後に Python 3.15 の版の番号が出ていれば、できています。</div></div></div><div class="tentry os-win" data-t="w-failed"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Windows</span><q>Program 'python.exe' failed to run: The system cannot find the path specified</q></div><div class="trow"><span class="k">原因</span><div class="v">python のエイリアス（命令の別名）が壊れています。直っていない不具合として報告されています。</div><span class="k">直し方</span><div class="v tfix">「Microsoft Store が開いた」の直し方と同じ設定の画面で、「Python (default)」を一度オフにしてオンに戻します。直らなければ、Python Install Manager をアンインストールして、手順 1 から入れ直します。</div></div></div><div class="tentry os-win" data-t="w-oldterm"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Windows</span>Python を入れる前から開いていたターミナルで打った</div><div class="trow"><span class="k">原因</span><div class="v">ターミナルは、開いたときの設定のまま動きます。あとから入れた Python が見えていません。</div><span class="k">直し方</span><div class="v tfix">ターミナルを閉じて、新しく開いてから打ち直します。</div></div></div><div class="tentry os-mac" data-t="m-clt"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Mac</span>「コマンドラインデベロッパツール」を入れるかを聞く窓が出た</div><div class="trow"><span class="k">原因</span><div class="v">入れた Python がまだ見えていない窓（または Python を入れる前）で python3 と打ち、Apple の python3 に当たりました。</div><span class="k">直し方</span><div class="v tfix">「キャンセル」を押します。Python を入れていなければ、手順 1 と 2 を先に行います。入れてあれば、ターミナルを新しく開いて打ち直します。</div></div></div><div class="tentry os-mac" data-t="m-nopy"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Mac</span><q>zsh: command not found: python</q></div><div class="trow"><span class="k">原因</span><div class="v">Mac には python（3 の付かない名前）という命令がありません。</div><span class="k">直し方</span><div class="v tfix"><code class="nw">python3 --version</code> と打ちます。</div></div></div><div class="tentry os-mac" data-t="m-old"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Mac</span>Python 3.9 など、3.15 より古い番号が出た</div><div class="trow"><span class="k">原因</span><div class="v">Apple の開発用のツールに入っている python3 に当たっています。</div><span class="k">直し方</span><div class="v tfix">次の命令でどの python3 かを確かめます。<div class="cmd os-mac"><span class="pr" aria-hidden="true">%</span><code class="cmdtext"><span class="tk">which</span> <span class="tk">python3</span></code><button type="button" class="copy" data-cmd="which python3" aria-label="which python3 をコピー">コピー</button><span class="copymsg" aria-hidden="true"></span></div><span class="fixp"><code class="nw">/usr/bin/python3</code> と出たら Apple の python3 です。ターミナルを閉じて新しく開き、もう一度 <code class="nw">python3 --version</code> と打ちます。新しい窓では <code>/Library/Frameworks/Python.framework/Versions/3.15/bin/python3</code> か <code class="nw">/usr/local/bin/python3</code> と出ます。どちらも手順 2 で入れた Python です。</span></div></div></div><div class="tentry os-mac" data-t="m-xcode"><div class="tsee"><span class="tstep">手順 4</span><span class="tstep tos">Mac</span><q>You have not agreed to the Xcode license agreements.</q> で始まる英語の文</div><div class="trow"><span class="k">原因</span><div class="v">Xcode を入れてある Mac で、Apple の python3 に当たっています。</div><span class="k">直し方</span><div class="v tfix">ターミナルを閉じて新しく開き、もう一度 <code class="nw">python3 --version</code> と打ちます。</div></div></div></div><div class="tblock"><h3>VS Code（手順 5〜9）</h3><div class="tentry os-win" data-t="w-admin"><div class="tsee"><span class="tstep">手順 5</span><span class="tstep tos">Windows</span><q>This User Installer is not meant to be run as an Administrator.</q> で始まる英語の警告</div><div class="trow"><span class="k">原因</span><div class="v">VS Code の User Installer を、管理者として実行しました。</div><span class="k">直し方</span><div class="v tfix">いったん止めて、.exe をふつうにダブルクリックし直します。</div></div></div><div class="tentry os-mac" data-t="m-nodrag"><div class="tsee"><span class="tstep">手順 5</span><span class="tstep tos">Mac</span>Finder の「アプリケーション」に Visual Studio Code が無い</div><div class="trow"><span class="k">原因</span><div class="v">.dmg の窓から、Applications のフォルダーへドラッグしていません。</div><span class="k">直し方</span><div class="v tfix">.dmg のファイルをもう一度開き、Visual Studio Code を Applications へドラッグします。</div></div></div><div class="tentry os-win" data-t="w-code"><div class="tsee"><span class="tstep">手順 5</span><span class="tstep tos">Windows</span><code class="nw">code --version</code> と打つと、見つからないというエラーが出た</div><div class="trow"><span class="k">原因</span><div class="v">VS Code を入れる前から開いていたターミナルで打っています。</div><span class="k">直し方</span><div class="v tfix">ターミナルを閉じて、新しく開いてから打ち直します。</div></div></div><div class="tentry" data-t="b-nolangnote"><div class="tsee"><span class="tstep">手順 6</span>右下に、日本語の言語パックを勧める知らせが出ない</div><div class="trow"><span class="k">原因</span><div class="v">この知らせは、出ないこともあります。</div><span class="k">直し方</span><div class="v tfix">コマンドパレットで display と打ち、「Configure Display Language」から日本語を選びます。</div></div></div><div class="tentry" data-t="b-similar"><div class="tsee"><span class="tstep">手順 7</span>検索の結果に、Python や Jupyter の名前の拡張がいくつも並ぶ</div><div class="trow"><span class="k">原因</span><div class="v">名前の似た拡張が、ほかの発行元からも出ています。</div><span class="k">直し方</span><div class="v tfix">名前の下に出る発行元が Microsoft のものを選びます。</div></div></div><div class="tentry" data-t="b-nojup"><div class="tsee"><span class="tstep">手順 7</span>インストール済みの一覧に Jupyter が無い</div><div class="trow"><span class="k">原因</span><div class="v">Jupyter 拡張は、Python 拡張を入れても一緒には入りません。</div><span class="k">直し方</span><div class="v tfix">検索欄に Jupyter と打ち、発行元が Microsoft の「Jupyter」を入れます。</div></div></div><div class="tentry os-mac" data-t="m-access"><div class="tsee"><span class="tstep">手順 8</span><span class="tstep tos">Mac</span>ターミナルや VS Code が、書類やデスクトップのフォルダーへのアクセスの許可を求めてきた</div><div class="trow"><span class="k">原因</span><div class="v">そのアプリから、そのフォルダーを初めて開きました。</div><span class="k">直し方</span><div class="v tfix">「許可」を押します。</div></div></div><div class="tentry" data-t="b-restricted"><div class="tsee"><span class="tstep">手順 8</span><q>制限モードは、安全なコード参照のためのものです。すべての機能を有効にするには、このフォルダーを信頼します。</q></div><div class="trow"><span class="k">原因</span><div class="v">VS Code は、新しく開いたフォルダーを、確認の窓を出さずに制限モードで開きます。このあいだは Python 拡張が働きません。</div><span class="k">直し方</span><div class="v tfix">バナーの「管理」を押し、開いた画面で「信頼する」を押します。</div></div></div><div class="tentry os-win" data-t="w-onlyname"><div class="tsee"><span class="tstep">手順 9</span><span class="tstep tos">Windows</span>ターミナルで <code class="nw">jikan.py</code> とだけ打つと、別の窓が開いてすぐ閉じる</div><div class="trow"><span class="k">原因</span><div class="v">Windows の決まりで、ファイルの名前だけを打つと別の窓で開きます。</div><span class="k">直し方</span><div class="v tfix">前に python を付けて <code class="nw">python jikan.py</code> と打ちます。</div></div></div><div class="tentry" data-t="b-tip"><div class="tsee"><span class="tstep">手順 9</span>右上の ▷ にマウスを乗せると「新しい Python ファイル」と出る</div><div class="trow"><span class="k">原因</span><div class="v">Python 拡張の日本語の訳の誤りです。英語の表示では Run Python File です。</div><span class="k">直し方</span><div class="v tfix">そのまま押します。押すと、開いているファイルが実行されます。</div></div></div><div class="tentry" data-t="b-norun"><div class="tsee"><span class="tstep">手順 9</span>エディターの右上に ▷ のボタンが無い</div><div class="trow"><span class="k">原因</span><div class="v">フォルダーが制限モードのままか、Python 拡張が入っていません。</div><span class="k">直し方</span><div class="v tfix">手順 8 の「信頼する」と、手順 7 の Python 拡張を確かめます。</div></div></div><div class="tentry" data-t="b-nointerp"><div class="tsee"><span class="tstep">手順 9</span>インタープリターの一覧に Python 3.15 が出ない</div><div class="trow"><span class="k">原因</span><div class="v">Python を入れる前から VS Code を開いていました。</div><span class="k">直し方</span><div class="v tfix">VS Code を閉じて、開き直します。</div></div></div><div class="tentry" data-t="b-cantopen"><div class="tsee"><span class="tstep">手順 9</span><code class="nw">can&#x27;t open file</code> と <code>[Errno 2] No such file or directory</code> を含む英語の文が出た</div><div class="trow"><span class="k">原因</span><div class="v">ターミナルのいる場所（フォルダー）に jikan.py がありません。</div><span class="k">直し方</span><div class="v tfix">jikan.py を、VS Code で開いたフォルダー（python-renshu）のいちばん上に置きます。▷ を押すと下に開くターミナルで、もう一度打ちます。</div></div></div></div><div class="tblock"><h3>配布ノート（手順 10〜11）</h3><div class="tentry" data-t="b-nohubbtn"><div class="tsee"><span class="tstep">手順 10</span>授業資料の入口で、その回の欄に「演習ノートをダウンロード」が無い</div><div class="trow"><span class="k">原因</span><div class="v">演習ノートの無い回か、まだ公開されていない回です。</div><span class="k">直し方</span><div class="v tfix">Colab で開いているノートなら、Colab の「ファイル」メニューから .ipynb をダウンロードします。</div></div></div><div class="tentry" data-t="b-noenv"><div class="tsee"><span class="tstep">手順 11</span><q>Python 環境が検出されませんでした。</q> で始まる文が出た</div><div class="trow"><span class="k">原因</span><div class="v">Python を入れる前から VS Code を開いていました。</div><span class="k">直し方</span><div class="v tfix">VS Code を閉じて、開き直します。</div></div></div><div class="tentry" data-t="b-kernel"><div class="tsee"><span class="tstep">手順 11</span>「インストール」を押しても、セルが動かない</div><div class="trow"><span class="k">原因</span><div class="v">Jupyter 拡張と Python 3.15 を組み合わせて最後まで動くかは、このマニュアルを作った時点では確かめられていません。</div><span class="k">直し方</span><div class="v tfix">そのノートは Colab で開いて続けます。</div></div></div><div class="tentry" data-t="b-bang"><div class="tsee"><span class="tstep">手順 11</span>! で始まるセル（<code class="nw">!python3 jikan.py</code> など）の結果が、Colab と違う</div><div class="trow"><span class="k">原因</span><div class="v">! のあとの命令は、手元の PC のターミナルに渡されます。動き方は PC によって違います。</div><span class="k">直し方</span><div class="v tfix">そのファイルは、手順 9 のように VS Code のターミナルで動かします。</div></div></div></div><p class="ask">人に聞くときは、何番の手順まで進んだかと、画面に出た文をそのまま伝えます。</p></section>
+<section class="sec" id="diff"><h2>Colab と手元の違い</h2><table class="diff"><thead><tr><th></th><th scope="col">授業の Colab</th><th scope="col" class="os-win">手元の Windows</th><th scope="col" class="os-mac">手元の Mac</th></tr></thead><tbody><tr><th scope="row">ファイルの置き場所</th><td data-h="Colab">Google のコンピュータの /content（つながりが切れると消える）</td><td class="os-win" data-h="Windows">自分で開いたフォルダー（消すまで残る）</td><td class="os-mac" data-h="Mac">自分で開いたフォルダー（消すまで残る）</td></tr><tr><th scope="row">ファイルを動かす命令</th><td data-h="Colab"><code class="nw">!python3 jikan.py</code>（セルに書く）</td><td class="os-win" data-h="Windows"><code class="nw">python jikan.py</code>（ターミナルに打つ）</td><td class="os-mac" data-h="Mac"><code class="nw">python3 jikan.py</code>（ターミナルに打つ）</td></tr><tr><th scope="row">版を確かめる命令</th><td data-h="Colab"><code class="nw">!python3 --version</code></td><td class="os-win" data-h="Windows"><code class="nw">python --version</code></td><td class="os-mac" data-h="Mac"><code class="nw">python3 --version</code></td></tr><tr><th scope="row">ファイルを動かしたときのエラーに出る場所</th><td data-h="Colab"><code>File &quot;/content/jikan.py&quot;, line 1</code></td><td class="os-win" data-h="Windows"><code>File &quot;C:\Users\<span class="ph">名前</span>\…\jikan.py&quot;, line 1</code></td><td class="os-mac" data-h="Mac"><code>File &quot;/Users/<span class="ph">名前</span>/…/jikan.py&quot;, line 1</code></td></tr><tr><th scope="row">ノートのセルの構文エラー（SyntaxError）に出る場所</th><td data-h="Colab"><code>File &quot;/tmp/ipykernel_…/….py&quot;, line 1</code> の形</td><td class="os-win" data-h="Windows"><code class="nw">Cell In[1], line 1</code> の形</td><td class="os-mac" data-h="Mac"><code class="nw">Cell In[1], line 1</code> の形</td></tr><tr><th scope="row">Python の版</th><td data-h="Colab">3.13</td><td class="os-win" data-h="Windows">3.15</td><td class="os-mac" data-h="Mac">3.15</td></tr><tr><th scope="row">インターネット</th><td data-h="Colab">要る</td><td class="os-win" data-h="Windows">動かすだけなら要らない</td><td class="os-mac" data-h="Mac">動かすだけなら要らない</td></tr></tbody></table><p class="after">この授業で書く範囲（print・変数・計算）では、3.13 と 3.15 で書き方は変わりません。</p></section>
+<section class="sec" id="others"><h2>ほかの入れ方</h2><p>次の入れ方もありますが、このマニュアルでは使いません。</p><dl class="others"><dt>Anaconda</dt><dd>大学で無料で使うには、大学が対象の機関に当たり、学生一人ずつが学術向けの使用許諾に同意して毎年更新する必要があります。この大学が対象に当たるかは、確かめられていません。</dd><dt class="os-win">Windows の従来のインストーラー（.exe）</dt><dd class="os-win">Python 3.15 を最後に作られなくなります。PATH に足す印が最初は外れていて、python3 という命令も入りません。</dd><dt class="os-win">Microsoft Store の「Python 3.13」などのアプリ</dt><dd class="os-win">版ごとのアプリは、3.14 から Store に出ていません。</dd><dt class="os-mac">Homebrew</dt><dd class="os-mac">macOS 15 以降が要ります。Homebrew の Python は、仮想環境（プロジェクトごとに分けた Python の置き場）の外では pip install が止まります。python.org のドキュメントは、Python の開発の中心のチームが手入れしていない配布として挙げています。</dd><dt>uv</dt><dd>既定では、python3.15 のような版の番号つきの名前の命令しか入りません。入る Python も、python.org の配布物とは別に作られたものです。</dd></dl></section>
+<footer class="foot"><div>公式の説明</div><ul><li class="os-win"><a class="ext" href="https://docs.python.org/3/using/windows.html" target="_blank" rel="noopener">Windows で Python を使う（docs.python.org・英語）</a></li><li class="os-mac"><a class="ext" href="https://docs.python.org/3/using/mac.html" target="_blank" rel="noopener">macOS で Python を使う（docs.python.org・英語）</a></li><li><a class="ext" href="https://www.python.org/downloads/release/python-3150/" target="_blank" rel="noopener">Python 3.15.0 のリリースのページ（python.org・英語）</a></li><li><a class="ext" href="https://code.visualstudio.com/docs/python/python-tutorial" target="_blank" rel="noopener">VS Code で Python を使う（code.visualstudio.com・英語）</a></li></ul><ul><li><a class="ext" href="https://mikikof.github.io/hiu-2026-fall/programming/" target="_blank" rel="noopener">授業資料の入口（プログラミング入門）</a></li></ul><p>平成国際大学 情報デザイン学部　プログラミング入門</p></footer>
+</main></div>
+<script>
+/* 導入マニュアル（プログラミング入門）の動き。build_local_setup.py が HTML の中に入れる。
+   - OS の切り替え: URL の #windows・#mac ＞ 覚えた選択 ＞ 開いた端末から推す（スマホとタブレットは推さない）
+   - 「できた」の印と進み具合: OS ごとに覚える
+   - コピー: navigator.clipboard。使えなければ命令の文字を選んだ状態にして、キーで写してもらう
+   - localStorage は使えないことがある（プライベートの窓・ブロック）。読み書きは全部 try で包み、使えなくても表示は崩さない */
+(function () {
+  'use strict';
+  var KEY = 'pn-local-setup:';
+  var root = document.documentElement;
+  var OSNAME = { win: 'Windows', mac: 'Mac' };
+
+  function sget(k) { try { return window.localStorage.getItem(KEY + k); } catch (e) { return null; } }
+  function sset(k, v) { try { window.localStorage.setItem(KEY + k, v); } catch (e) { /* 使えなくても続ける */ } }
+
+  function fromHash() {
+    var h = (location.hash || '').replace(/^#/, '').toLowerCase();
+    if (h === 'windows') return 'win';
+    if (h === 'mac') return 'mac';
+    return '';
+  }
+
+  function guess() {
+    var ua = navigator.userAgent || '';
+    var plat = (navigator.userAgentData && navigator.userAgentData.platform) || navigator.platform || '';
+    var touchMac = /Mac/i.test(plat) && (navigator.maxTouchPoints || 0) > 1;   // iPad はデスクトップの名乗りをする
+    if (/Android|iPhone|iPad|iPod|Mobile/i.test(ua) || touchMac) return '';      // スマホでは入れる PC が分からない
+    if (/Win/i.test(plat) || /Windows/i.test(ua)) return 'win';
+    if (/Mac/i.test(plat) || /Mac OS X|Macintosh/i.test(ua)) return 'mac';
+    return '';
+  }
+
+  var steps = Array.prototype.slice.call(document.querySelectorAll('.step[data-n]'));
+  var total = steps.length;
+
+  function loadDone(os) {
+    var raw = sget('done:' + os);
+    if (!raw) return {};
+    var o = {};
+    raw.split(',').forEach(function (n) { if (n) o[n] = true; });
+    return o;
+  }
+  function saveDone(os, o) {
+    sset('done:' + os, Object.keys(o).filter(function (k) { return o[k]; }).join(','));
+  }
+
+  var cur = '';
+  var done = {};
+
+  function paint() {
+    var n = 0;
+    steps.forEach(function (st) {
+      var k = st.getAttribute('data-n');
+      var on = !!done[k];
+      if (on) n++;
+      st.classList.toggle('is-done', on);
+      Array.prototype.forEach.call(st.querySelectorAll('input.donebox'), function (box) { box.checked = on; });
+      var li = document.querySelector('.toc li[data-n="' + k + '"]');
+      if (li) li.classList.toggle('is-done', on);
+    });
+    var t = document.getElementById('prog-n');
+    if (t) t.textContent = String(n);
+    var bar = document.getElementById('prog-bar');
+    if (bar) bar.style.width = (total ? Math.round(n * 100 / total) : 0) + '%';
+  }
+
+  function setOS(os, how) {
+    if (os !== 'win' && os !== 'mac') return;
+    cur = os;
+    root.setAttribute('data-os', os);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-pick]'), function (b) {
+      if (b.closest('.seg')) b.setAttribute('aria-pressed', b.getAttribute('data-pick') === os ? 'true' : 'false');
+    });
+    var po = document.getElementById('print-os');
+    if (po) po.textContent = OSNAME[os] + ' の手順';
+    if (how !== 'load') sset('os', os);
+    if (how === 'click' && window.history && history.replaceState) {
+      try { history.replaceState(null, '', '#' + (os === 'win' ? 'windows' : 'mac')); } catch (e) { /* file:// など */ }
+    }
+    done = loadDone(os);
+    paint();
+  }
+
+  /* はじめの選択 */
+  var first = fromHash() || sget('os') || guess();
+  if (first === 'win' || first === 'mac') setOS(first, 'load');
+  else paint();
+
+  window.addEventListener('hashchange', function () {
+    var h = fromHash();
+    if (h && h !== cur) setOS(h, 'hash');
+  });
+
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    if (!t || !t.closest) return;
+    var pick = t.closest('[data-pick]');
+    if (pick) {
+      setOS(pick.getAttribute('data-pick'), 'click');
+      if (pick.closest('.pickos')) {
+        var s = document.getElementById('steps-start');
+        if (s && s.scrollIntoView) s.scrollIntoView({ block: 'start' });
+      }
+      return;
+    }
+    var cb = t.closest('button.copy');
+    if (cb) copyCmd(cb);
+  });
+
+  document.addEventListener('change', function (e) {
+    var box = e.target;
+    if (!box || !box.classList || !box.classList.contains('donebox')) return;
+    var st = box.closest('.step');
+    if (!st || !cur) return;
+    done[st.getAttribute('data-n')] = box.checked;
+    saveDone(cur, done);
+    paint();
+  });
+
+  /* コピー */
+  var live = document.getElementById('live');
+  function say(msg) { if (live) { live.textContent = ''; window.setTimeout(function () { live.textContent = msg; }, 30); } }
+  function flash(btn, label, msg) {
+    var box = btn.parentNode;
+    var m = box.querySelector('.copymsg');
+    btn.textContent = label;
+    btn.classList.add('ok');
+    if (m) m.textContent = msg || '';
+    say(msg || label);
+    window.clearTimeout(btn._t);
+    btn._t = window.setTimeout(function () {
+      btn.textContent = 'コピー';
+      btn.classList.remove('ok');
+      if (m) m.textContent = '';
+    }, msg ? 6000 : 1800);
+  }
+  function selectCode(btn) {
+    var codeEl = btn.parentNode.querySelector('code.cmdtext');
+    if (!codeEl || !window.getSelection || !document.createRange) return false;
+    var r = document.createRange();
+    r.selectNodeContents(codeEl);
+    var s = window.getSelection();
+    s.removeAllRanges();
+    s.addRange(r);
+    return true;
+  }
+  function fallback(btn) {
+    var ok = selectCode(btn);
+    var k = cur === 'mac' ? '⌘+C' : 'Ctrl+C';
+    flash(btn, 'コピー', ok ? '文字を選んだ状態にしました。' + k + ' を押すとコピーできます。'
+      : 'コピーできませんでした。命令の文字を選んで ' + k + ' を押します。');
+    btn.classList.remove('ok');
+  }
+  function copyCmd(btn) {
+    var text = btn.getAttribute('data-cmd') || '';
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () { flash(btn, 'コピーしました'); },
+          function () { fallback(btn); });
+        return;
+      }
+    } catch (e) { /* 下へ */ }
+    fallback(btn);
+  }
+
+  /* 印刷: 開閉を全部開いてから刷り、終わったら戻す */
+  var reopened = [];
+  window.addEventListener('beforeprint', function () {
+    /* beforeprint が続けて 2 回来ても、閉じていたものの控えを消さない */
+    Array.prototype.forEach.call(document.querySelectorAll('details'), function (d) {
+      if (!d.open) { d.open = true; reopened.push(d); }
+    });
+  });
+  window.addEventListener('afterprint', function () {
+    reopened.forEach(function (d) { d.open = false; });
+    reopened = [];
+  });
+
+  /* 目次のいまいる所 */
+  if ('IntersectionObserver' in window) {
+    var links = {};
+    Array.prototype.forEach.call(document.querySelectorAll('.toc a[href^="#"]'), function (a) {
+      links[a.getAttribute('href').slice(1)] = a;
+    });
+    var targets = Array.prototype.slice.call(document.querySelectorAll('section.sec[id], .step[id]'));
+    var vis = {};
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (en) { vis[en.target.id] = en.isIntersecting; });
+      var on = '';
+      for (var i = 0; i < targets.length; i++) {
+        var id = targets[i].id;
+        if (vis[id] && links[id] && targets[i].offsetParent !== null) { on = id; break; }
+      }
+      Object.keys(links).forEach(function (k) {
+        if (k === on) links[k].setAttribute('aria-current', 'true');
+        else links[k].removeAttribute('aria-current');
+      });
+    }, { rootMargin: '-64px 0px -55% 0px' });
+    targets.forEach(function (t) { io.observe(t); });
+  }
+})();
+</script>
+</body>
+</html>
